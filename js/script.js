@@ -1,32 +1,69 @@
-console.log("Working...");
+let taskIdCounter = 0;
 
-const toDoList = document.querySelector("#to-do-list");
-let nothingToDo = document.querySelector("#nothing-to-do");
+class Manager {
+  refreshList(list) {
+    list.element.innerHTML = '';
 
-let idCount = 1;
-
-function addToDoTask(title) {
-  checkRemoveNothingToDo(nothingToDo);
-  toDoList.innerHTML += 
-    `<li id="task${idCount < 10 ? "0" + idCount : idCount}">${title}</li>`;
-  idCount++;
-}
-
-function removeToDoTask(id) {
-  document.querySelector(`#task${id < 10 ? "0" + id : id}`).remove(); 
-  checkAddNothingToDo();
-}
-
-function checkRemoveNothingToDo() {
-  if (nothingToDo) {
-    nothingToDo.remove();
-    nothingToDo = null;
+    list.items.forEach(item => {      
+      list.element.innerHTML += item.element;
+    });
   }
 }
 
-function checkAddNothingToDo() {
-  if (!document.querySelector("#to-do-list li")) {
-    toDoList.innerHTML += `<li id="nothing-to-do">Nothing to do</li>`;
-    nothingToDo = document.querySelector("#nothing-to-do");
+class List {
+  constructor(name) {    
+    this.name = name;
+    this.items = [];
+    this.element = document.querySelector(`#${camelToKebab(name)}`);
   }
+
+  addItem(item) {
+    this.items.push(item);
+    console.log("Item added to list.");
+  }
+
+  removeItem(id) {
+    this.items = this.items.filter(item => item.id !== id);
+    console.log("Item removed from list.");
+  }
+
+  moveItem(destination, id) {
+    destination.items.push(this.items[id]);
+    this.removeItem(id);
+    console.log(`Item moved to ${destination.name}.`);
+  }
+
+  getNumberOfItems() {
+    return this.items.length;
+  }
+}
+
+class Task {
+  constructor(name, tag = "General") {    
+    this.id = taskIdCounter++;
+    this.name = name;
+    this.tag = tag;
+    this.element = `<li id="task${this.id}">${this.name} - ${this.tag} - Delete</li>`;
+  }
+
+  editName(newName) {
+    this.name = newName;
+  }
+
+  editTag(newTag) {
+    this.tag = newTag;
+  }
+}
+
+const manager = new Manager();
+
+const toDoList = new List("toDoList", "to-do-list");
+const completedList = new List("completedList", "completed-list");
+
+function camelToKebab(string) {  
+    return string.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`); 
+}
+
+function kebabToCamel(string) {
+  return string.replace(/-./g, match => match[1].toUpperCase());
 }
