@@ -3,7 +3,7 @@ console.log("Working...");
 const toDoList = document.querySelector("#to-do-list");
 let nothingToDo = document.querySelector("#nothing-to-do");
 
-idCount = 1;
+let idCount = 1;
 
 function addToDoTask(title) {
   checkRemoveNothingToDo(nothingToDo);
@@ -12,7 +12,7 @@ function addToDoTask(title) {
   idCount++;
 }
 
-function removeToDoTask(id = 1) {
+function removeToDoTask(id) {
   document.querySelector(`#task${id < 10 ? "0" + id : id}`).remove(); 
   checkAddNothingToDo();
 }
@@ -26,9 +26,7 @@ function checkRemoveNothingToDo() {
 
 function checkAddNothingToDo() {
   if (!document.querySelector("#to-do-list li")) {
-    nothingToDo = document.createElement("li");
-    nothingToDo.setAttribute("id", "nothing-to-do");
-    nothingToDo.innerHTML = `Nothing to do`;
-    toDoList.appendChild(nothingToDo);
+    toDoList.innerHTML += `<li id="nothing-to-do">Nothing to do</li>`;
+    nothingToDo = document.querySelector("#nothing-to-do");
   }
 }
