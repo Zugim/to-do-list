@@ -2,8 +2,8 @@ let taskIdCounter = 0;
 
 class Manager {
   refreshList(list) {
+    // reset the lists innerHTML before refreshing the list    
     list.element.innerHTML = '';
-
     list.items.forEach(item => {      
       list.element.innerHTML += item.element;
     });
@@ -57,8 +57,8 @@ class Task {
 
 const manager = new Manager();
 
-const toDoList = new List("toDoList", "to-do-list");
-const completedList = new List("completedList", "completed-list");
+const toDoList = new List("toDoList");
+const completedList = new List("completedList");
 
 function camelToKebab(string) {  
     return string.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`); 
