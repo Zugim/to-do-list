@@ -1,6 +1,17 @@
+let listIdCounter = 2;
 let taskIdCounter = 0;
 
 class Manager {
+  constructor() {
+    
+    this.lists = [new List(this, "completedList"), new List(this, "completedList")];    
+  }
+
+  addList(list) {
+    list.push(list)
+    console.log("Item added to list.");
+  }
+
   refreshList(list) {
     // reset the lists innerHTML before refreshing the list    
     list.element.innerHTML = '';
@@ -11,7 +22,8 @@ class Manager {
 }
 
 class List {
-  constructor(manager, name) {    
+  constructor(manager, name) {
+    this.id = listIdCounter++;    
     this.name = name;
     this.items = [];
     this.element = document.querySelector(`#${camelToKebab(name)}`);
@@ -61,8 +73,8 @@ class Task {
 
 const manager = new Manager();
 
-const toDoList = new List(manager, "toDoList");
-const completedList = new List(manager, "completedList");
+// const toDoList = new List(manager, "toDoList");
+// const completedList = new List(manager, "completedList");
 
 function camelToKebab(string) {  
     return string.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`); 
