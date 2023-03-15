@@ -11,7 +11,7 @@ class Manager {
 }
 
 class List {
-  constructor(name) {    
+  constructor(manager, name) {    
     this.name = name;
     this.items = [];
     this.element = document.querySelector(`#${camelToKebab(name)}`);
@@ -20,17 +20,21 @@ class List {
   addItem(item) {
     this.items.push(item);
     console.log("Item added to list.");
+    manager.refreshList(this);
   }
 
   removeItem(id) {
     this.items = this.items.filter(item => item.id !== id);
     console.log("Item removed from list.");
+    manager.refreshList(this);
   }
 
   moveItem(destination, id) {
     destination.items.push(this.items[id]);
     this.removeItem(id);
     console.log(`Item moved to ${destination.name}.`);
+    manager.refreshList(this);
+    manager.refreshList(destination);
   }
 
   getNumberOfItems() {
@@ -57,8 +61,8 @@ class Task {
 
 const manager = new Manager();
 
-const toDoList = new List("toDoList");
-const completedList = new List("completedList");
+const toDoList = new List(manager, "toDoList");
+const completedList = new List(manager, "completedList");
 
 function camelToKebab(string) {  
     return string.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`); 
