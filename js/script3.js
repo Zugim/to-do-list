@@ -14,10 +14,6 @@ class Component {
   editAttribute(attribute, newValue) {
     this[`${attribute}`] = newValue;
   }
-
-  destroy() {
-    document.querySelector(`#${this.id}`).remove();
-  }
 }
 
 class Page extends Component {
@@ -35,16 +31,14 @@ class Page extends Component {
       <h1>${this.date}</h1>
       <h2>${this.lists[0].title}</h2>
       <ul id="${this.lists[0].id}">
-        ${this.lists[0].tasks.length === 0 ? `<li>Nothing to do</li>` :
-          this.lists[0].tasks.map(task => task.generateHtmlFrag()).join("")}        
+        ${this.lists[0].checkEmpty()}        
       </ul>
       <h2>${this.lists[1].title}</h2>
       <ul id="${this.lists[1].id}">
-      ${this.lists[0].tasks.length === 0 ? `<li>Nothing to do</li>` :
-          this.lists[0].tasks.map(task => task.generateHtmlFrag()).join("")}
+        ${this.lists[0].checkEmpty()}
       </ul>
     </div>
-  `;
+    `;
   }  
 }
 
@@ -52,24 +46,54 @@ class List extends Component {
   constructor(idStem, id, title) {
     super(idStem, id);
     this.title = title;
+    // this.tasks = [new Task("task", taskIdCounter++, "Test Task", "Test")];
     this.tasks = [];
     this.subLists = [];
   } 
 
-  generateHtmlFrag() {
-    return `       
-    <h2>${this.title}</h2>
-    <ul id="${this.id}">
-      ${this.tasks.length === 0 ? `<li>Nothing to do</li>` :
-      this.tasks.map(task => task.generateHtmlFrag()).join("")}
-    </ul>    
-  `;
+  generateHtmlFrag(flag = "all") {
+    if(flag === "all") {
+      return ` 
+        <h2>${this.title}</h2>      
+        <ul id="${this.id}">
+          ${this.checkEmpty()}
+        </ul>    
+      `;
+    } else if(flag === "tasks") {
+      return this.checkEmpty();
+    }
   }
 
   addTask(task) {
     this.tasks.push(task);
+
+    if(document.querySelector(`#${this.id} > #emptyList`)) {
+      document.querySelector(`#${this.id} > #emptyList`).remove();
+    }
+    
     this.render(`#${this.id}`, task.generateHtmlFrag());
-  }  
+  } 
+
+  removeTask(id) {
+    this.tasks = this.tasks.filter(item => item.id !== id)
+
+    document.querySelector(`#${this.id}`).innerHTML = "";
+
+    // if(this.tasks.length === 0) {
+    //   document.querySelector(`#${this.id}`).innerHTML += `<li id="emptyList">Nothing to do</li>`;
+    // }
+    
+    
+    this.render(`#${this.id}`, this.generateHtmlFrag("tasks"));
+  }
+  
+  checkEmpty() {
+    if(this.tasks.length === 0) {
+      return `<li id="emptyList">Nothing to do</li>`;
+    } else {
+      return this.tasks.map(task => task.generateHtmlFrag()).join("");
+    }
+  }
 }
 
 class Task extends Component {
@@ -82,7 +106,7 @@ class Task extends Component {
   generateHtmlFrag() {
     return `       
     <li id="${this.id}">${this.title} - ${this.tag} - delete</li> 
-  `;
+    `;
   }
 }
 
