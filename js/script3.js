@@ -7,8 +7,7 @@ class Component {
     this.id = `${idStem}${id}`;
   }
 
-  draw(location, htmlFrag) {
-    this.htmlFrag = htmlFrag;
+  render(location, htmlFrag) {
     document.querySelector(location).innerHTML += htmlFrag;
   }
 
@@ -22,30 +21,53 @@ class Component {
 }
 
 class Page extends Component {
-  constructor(idStem, id, date, htmlFrag) {
+  constructor(idStem, id, date) {
     super(idStem, id);
     this.date = date;    
 
     this.lists = [new List("toDoList", id, "To Do List"),
                   new List("completedList", id, "Completed List")];
-    this.htmlFrag = `
-      <div id="${this.id}">
-        <h1>${this.date}</h1>
-        <h2>${this.lists[0].title}</h2>
-        <ul id="${this.lists[0].id}">${this.lists[0].title}</ul>
-        <h2>${this.lists[1].title}</h2>
-        <ul id="${this.lists[1].id}">${this.lists[1].title}</ul>
-      </div>
-    `
   }
+
+  generateHtmlFrag() {
+    return `
+    <div id="${this.id}">
+      <h1>${this.date}</h1>
+      <h2>${this.lists[0].title}</h2>
+      <ul id="${this.lists[0].id}">
+        ${this.lists[0].tasks.length === 0 ? `<li>Nothing to do</li>` :
+          this.lists[0].tasks.map(task => task.generateHtmlFrag()).join("")}        
+      </ul>
+      <h2>${this.lists[1].title}</h2>
+      <ul id="${this.lists[1].id}">
+      ${this.lists[0].tasks.length === 0 ? `<li>Nothing to do</li>` :
+          this.lists[0].tasks.map(task => task.generateHtmlFrag()).join("")}
+      </ul>
+    </div>
+  ` ;
+  }  
 }
 
 class List extends Component {
   constructor(idStem, id, title) {
     super(idStem, id);
     this.title = title;
+    this.tasks = [new Task("task", taskIdCounter++, "Added via loop", "Loop")];
+    //this.tasks = [];
     this.subLists = [];
+  } 
+
+  generateHtmlFrag() {
+    return `       
+    <h2>${this.title}</h2>
+    <ul id="${this.id}">${this.title}</ul>    
+  ` ;
   }
+
+  addTask(task) {
+    this.tasks.push(task);
+    this.render(`#${this.id}`, task.generateHtmlFrag());
+  }  
 }
 
 class Task extends Component {
@@ -54,35 +76,13 @@ class Task extends Component {
     this.title = title;
     this.tag = tag;
   }
-}
 
-function generateTemplate(stem) {
-  return `
-  <div id="${stem.id}">
-    <h1>${stem.date}</h1>
-    <h2>${stem.lists[0].title}</h2>
-    <ul id="${stem.lists[0].id}">${stem.lists[0].title}</ul>
-    <h2>${stem.lists[1].title}</h2>
-    <ul id="${stem.lists[1].id}">${stem.lists[1].title}</ul>
-  </div>
-  `
+  generateHtmlFrag() {
+    return `       
+    <li id="${this.id}">${this.title} - ${this.tag} - delete</li> 
+  ` ;
+  }
 }
 
 const testPage = new Page ("page", pageIdCounter++, "3/16/2023");
-
-testPage.draw("body", testPage.htmlFrag);
-testPage.destroy();
-testPage.lists[0].editAttribute("title", "OVERWRITTEN");
-testPage.draw("body", `
-<div id="${testPage.id}">
-  <h1>${testPage.date}</h1>
-  <h2>${testPage.lists[0].title}</h2>
-  <ul id="${testPage.lists[0].id}">${testPage.lists[0].title}</ul>
-  <h2>${testPage.lists[1].title}</h2>
-  <ul id="${testPage.lists[1].id}">${testPage.lists[1].title}</ul>
-</div>
-`);
-
-
-
-
+testPage.render("body", testPage.generateHtmlFrag());
