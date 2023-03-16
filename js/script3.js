@@ -44,7 +44,7 @@ class Page extends Component {
           this.lists[0].tasks.map(task => task.generateHtmlFrag()).join("")}
       </ul>
     </div>
-  ` ;
+  `;
   }  
 }
 
@@ -52,16 +52,18 @@ class List extends Component {
   constructor(idStem, id, title) {
     super(idStem, id);
     this.title = title;
-    this.tasks = [new Task("task", taskIdCounter++, "Added via loop", "Loop")];
-    //this.tasks = [];
+    this.tasks = [];
     this.subLists = [];
   } 
 
   generateHtmlFrag() {
     return `       
     <h2>${this.title}</h2>
-    <ul id="${this.id}">${this.title}</ul>    
-  ` ;
+    <ul id="${this.id}">
+      ${this.tasks.length === 0 ? `<li>Nothing to do</li>` :
+      this.tasks.map(task => task.generateHtmlFrag()).join("")}
+    </ul>    
+  `;
   }
 
   addTask(task) {
@@ -80,7 +82,7 @@ class Task extends Component {
   generateHtmlFrag() {
     return `       
     <li id="${this.id}">${this.title} - ${this.tag} - delete</li> 
-  ` ;
+  `;
   }
 }
 
