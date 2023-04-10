@@ -15,11 +15,22 @@ class Page {
       ${this.lists.map(item => `${item.htmlFrag}`).join("")}
     </div>
     `;
-    this.elements = [{name: "elAddNewListButton", selector: `#${this.id} > button`, el: null},
-                     {name: "elTitle", selector: `#${this.id} > h1`, el: null},
-                     {name: "elToDoList", selector: `#${this.id} > #${this.lists[0].id}`, el: null},
-                     {name: "elCompletedList", selector: `#${this.id} > #${this.lists[1].id}`, el: null},];    
-  }  
+    this.elements = [{name: "elAddNewListButton", selector: `#${this.id} > button`, 
+                        el: null, clickable: true, callBack: this.addItem},
+                     {name: "elTitle", selector: `#${this.id} > h1`, 
+                        el: null, clickable: null, callBack: null},
+                     {name: "elToDoList", selector: `#${this.id} > #${this.lists[0].id}`, 
+                        el: null, clickable: null, callBack: null},
+                     {name: "elCompletedList", selector: `#${this.id} > #${this.lists[1].id}`, 
+                        el: null, clickable: null, callBack: null},];    
+  } 
+  
+  addItem() {
+    console.log("You Clicked A Button!");
+    pages.push(new Page(pageIdCounter++));
+    controller.renderComponent("body", pages[pages.length - 1].htmlFrag);
+    controller.initComponent(pages[pages.length - 1]);
+  }
 }
 
 class SimpleList {
@@ -34,7 +45,7 @@ class SimpleList {
       </ul>
     </div>
     `;
-  }
+  }  
 }
 
 class ComplexList {
@@ -68,21 +79,29 @@ class Controller {
       element.el = document.querySelector(`${element.selector}`);
       console.log("Component Initialized");
       console.log(`Selector: ${element.selector} Element: ${element.el}`);
-    });    
+
+      if (element.clickable) {
+        console.log("Is Clickable");
+        element.el.addEventListener("click", element.callBack);
+        console.log("Event Listener Bound")
+      } else {
+        console.log("Not Clickable");
+      }
+    });  
   }
 }
 
 let controller = new Controller();
 
 pages.push(new Page(pageIdCounter++));
-pages[0].lists.push(new ComplexList("testComplexList", "Test Complex List"));
 // Test add new component
+// pages[0].lists.push(new ComplexList("testComplexList", "Test Complex List"));
 // pages[0].elements.push({name: "elTestComplexList", 
 //                         selector: `#${pages[0].id} > #${pages[0].lists.at(-1).id}`, 
 //                         el: null},)
 
-controller.renderComponent("body", pages[0].htmlFrag);
-controller.initComponent(pages[0]);
+controller.renderComponent("body", pages[pages.length - 1].htmlFrag);
+controller.initComponent(pages[pages.length - 1]);
 // Test add new component
 // controller.renderComponent(`#${pages[0].id}`, pages[0].lists.at(-1).htmlFrag);
 // controller.initComponent(pages[0]);
