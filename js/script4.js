@@ -27,9 +27,9 @@ class Page {
   
   addItem() {
     console.log("You Clicked A Button!");
-    pages.push(new Page(pageIdCounter++));
+    pages.push(new Page(pageIdCounter++));    
     controller.renderComponent("body", pages[pages.length - 1].htmlFrag);
-    controller.initComponent(pages[pages.length - 1]);
+    pages.forEach(page => controller.initComponent(page));
   }
 }
 
