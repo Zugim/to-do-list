@@ -77,12 +77,7 @@ class List extends Component {
   removeTask(id) {
     this.tasks = this.tasks.filter(item => item.id !== id)
 
-    document.querySelector(`#${this.id}`).innerHTML = "";
-
-    // if(this.tasks.length === 0) {
-    //   document.querySelector(`#${this.id}`).innerHTML += `<li id="emptyList">Nothing to do</li>`;
-    // }
-    
+    document.querySelector(`#${this.id}`).innerHTML = "";    
     
     this.render(`#${this.id}`, this.generateHtmlFrag("tasks"));
   }
