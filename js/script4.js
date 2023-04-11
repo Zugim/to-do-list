@@ -4,8 +4,6 @@
 pageIdCounter = 0;
 taskIdCounter = 0;
 
-let pages = [];
-
 class Element {
   constructor(name, selector, clickable = false, callBack = null, el = null) {
     this.name = name;
@@ -14,6 +12,68 @@ class Element {
     this.clickable = clickable;
     this.callBack = callBack;
   }
+}
+
+class Task {
+  constructor(id, title, tag) {
+    this.id = `task${id}`;
+    this.title = title;
+    this.tag = tag;
+    this.htmlFrag = `
+    <li id="${this.id}">${this.title} - ${this.tag} - <button id="${this.id}Delete">delete</button></li>
+    `
+  }
+}
+
+class List {
+  constructor(id, title) {
+    this.id = id;
+    this.title = title;
+  }
+}
+
+class SimpleList extends List {
+  constructor(id, title) {
+    super(id, title);
+    this.tasks = [];
+    this.htmlFrag = `
+    <div id="${this.id}">
+      <h1>${this.title}</h1>
+      <ul> 
+        </li class="emptyList">Empty list</li>
+      </ul>
+    </div>
+    `;
+  }  
+}
+
+class ComplexList extends List {
+  constructor(id, title) {
+    super(id, title);
+    this.tasks = ["TEST"];
+    this.htmlFrag = `
+    <div id="${this.id}">
+      <h1>${this.title}</h1>
+      <button>Add new task</button>
+      <ul> 
+        </li class="emptyList">Empty list</li>
+      </ul>
+    </div>
+    `;
+    this.elements = [new Element("elTitle", `#${this.id} > h1`),
+                     new Element("elAddNewTaskButton", `#${this.id} > button`, true, this.addTask)];
+  }
+
+  addTask() {
+    console.log("You Clicked The Add Task Button!");
+    this.tasks.push("TEST");    
+    controller.renderComponent("body", controller.pages[controller.pages.length - 1].htmlFrag);
+    // Reinitializes each component on the page as renderComponent currently resets the DOM resulting
+    // in some event listeners being removed. This is caused by modifiying the innerHTML of a parent element.
+    // Can be improved upon.
+    controller.pages.forEach(page => controller.initComponent(page));
+    controller.pages.forEach(page => controller.initComponent(page.lists[0]));
+  }  
 }
 
 class Page {
@@ -28,64 +88,32 @@ class Page {
       ${this.lists.map(item => `${item.htmlFrag}`).join("")}
     </div>
     `;  
-    this.elements = [new Element("elAddNewListButton", `#${this.id} > button`, true, this.addItem),
-                     new Element("elTitle", `#${this.id} > h1`),
+    this.elements = [new Element("elTitle", `#${this.id} > h1`),
+                     new Element("elAddNewListButton", `#${this.id} > button`, true, this.addPage),                     
                      new Element("elToDoList", `#${this.id} > #${this.lists[0].id}`),
-                     new Element("elCompletedList", `#${this.id} > #${this.lists[1].id}`)]
+                     new Element("elCompletedList", `#${this.id} > #${this.lists[1].id}`)];
   } 
   
-  addItem() {
-    console.log("You Clicked A Button!");
-    pages.push(new Page(pageIdCounter++));    
-    controller.renderComponent("body", pages[pages.length - 1].htmlFrag);
-    // reinitializes each component on the page as renderComponent currently resets the DOM which also
-    // removes any event listeners. This is caused by modifiying the innerHTML of a parent element.
+  addPage() {
+    console.log("You Clicked The Add Page Button!");
+    controller.pages.push(new Page(pageIdCounter++));    
+    controller.renderComponent("body", controller.pages[controller.pages.length - 1].htmlFrag);
+    // Reinitializes each component on the page as renderComponent currently resets the DOM resulting
+    // in some event listeners being removed. This is caused by modifiying the innerHTML of a parent element.
     // Can be improved upon.
-    pages.forEach(page => controller.initComponent(page));
-  }
-}
-
-class List {
-  constructor(id, title) {
-    this.id = id;
-    this.title = title;
-  }
-}
-
-class SimpleList extends List {
-  constructor(id, title) {
-    super(id, title)
-    this.htmlFrag = `
-    <div id="${this.id}">
-      <h1>${this.title}</h1>
-      <ul> 
-        </li class="emptyList">Empty list</li>
-      </ul>
-    </div>
-    `;
+    controller.pages.forEach(page => controller.initComponent(page));
+    controller.pages.forEach(page => controller.initComponent(page.lists[0]));
   }  
 }
 
-class ComplexList extends List {
-  constructor(id, title) {
-    super(id, title)
-    this.htmlFrag = `
-    <div id="${this.id}">
-      <h1>${this.title}</h1>
-      <button>Add new task</button>
-      <ul> 
-        </li class="emptyList">Empty list</li>
-      </ul>
-    </div>
-    `;
-  }
-}
-
-class Task {
-
-}
-
 class Controller {
+  constructor() {    
+    this.pages = [new Page(pageIdCounter++)]
+
+    this.renderComponent("body", this.pages[this.pages.length - 1].htmlFrag);
+    this.initComponent(this.pages[this.pages.length - 1]);
+    this.initComponent(this.pages[this.pages.length - 1].lists[0]);
+  }
   renderComponent(location, htmlFrag) {    
     document.querySelector(location).innerHTML += htmlFrag;
     console.log("Component Rendered");
@@ -109,16 +137,3 @@ class Controller {
 }
 
 let controller = new Controller();
-
-pages.push(new Page(pageIdCounter++));
-// Test add new component
-// pages[0].lists.push(new ComplexList("testComplexList", "Test Complex List"));
-// pages[0].elements.push({name: "elTestComplexList", 
-//                         selector: `#${pages[0].id} > #${pages[0].lists.at(-1).id}`, 
-//                         el: null},)
-
-controller.renderComponent("body", pages[pages.length - 1].htmlFrag);
-controller.initComponent(pages[pages.length - 1]);
-// Test add new component
-// controller.renderComponent(`#${pages[0].id}`, pages[0].lists.at(-1).htmlFrag);
-// controller.initComponent(pages[0]);
