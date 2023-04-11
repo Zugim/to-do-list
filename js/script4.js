@@ -1,7 +1,5 @@
-// ~~~~~Things to improve~~~~~
-// Change how renderComponent works (research insertAdjacentHTML and append)
-
 pageIdCounter = 0;
+listIdCounter = 0;
 taskIdCounter = 0;
 
 class Element {
@@ -27,7 +25,7 @@ class Task {
 
 class List {
   constructor(id, title) {
-    this.id = id;
+    this.id = `list${id}`;
     this.title = title;
   }
 }
@@ -60,27 +58,19 @@ class ComplexList extends List {
       </ul>
     </div>
     `;
-    this.elements = [new Element("elTitle", `#${this.id} > h1`),
-                     new Element("elAddNewTaskButton", `#${this.id} > button`, true, this.addTask)];
+    this.elements = [new Element("elAddNewTaskButton", `#${this.id} > button`, true, this.addTask)];
   }
 
   addTask() {
-    console.log("You Clicked The Add Task Button!");
-    this.tasks.push("TEST");    
-    controller.renderComponent("body", controller.pages[controller.pages.length - 1].htmlFrag);
-    // Reinitializes each component on the page as renderComponent currently resets the DOM resulting
-    // in some event listeners being removed. This is caused by modifiying the innerHTML of a parent element.
-    // Can be improved upon.
-    controller.pages.forEach(page => controller.initComponent(page));
-    controller.pages.forEach(page => controller.initComponent(page.lists[0]));
+    console.log("You Clicked The Add Task Button!");    
   }  
 }
 
 class Page {
   constructor(id) {
     this.id = `page${id}`;    
-    this.lists = [new ComplexList("toDoList", "To Do List"),
-                  new SimpleList("completedList", "Completed List")];
+    this.lists = [new ComplexList(listIdCounter++, "To Do List"),
+                  new SimpleList(listIdCounter++, "Completed List")];
     this.htmlFrag = `
     <div id="${this.id}">
       <h1>4/10/2023</h1>
@@ -88,34 +78,27 @@ class Page {
       ${this.lists.map(item => `${item.htmlFrag}`).join("")}
     </div>
     `;  
-    this.elements = [new Element("elTitle", `#${this.id} > h1`),
-                     new Element("elAddNewListButton", `#${this.id} > button`, true, this.addPage),                     
-                     new Element("elToDoList", `#${this.id} > #${this.lists[0].id}`),
-                     new Element("elCompletedList", `#${this.id} > #${this.lists[1].id}`)];
+    this.elements = [new Element("elAddNewListButton", `#${this.id} > button`, true, this.addPage)];
   } 
   
   addPage() {
     console.log("You Clicked The Add Page Button!");
     controller.pages.push(new Page(pageIdCounter++));    
-    controller.renderComponent("body", controller.pages[controller.pages.length - 1].htmlFrag);
-    // Reinitializes each component on the page as renderComponent currently resets the DOM resulting
-    // in some event listeners being removed. This is caused by modifiying the innerHTML of a parent element.
-    // Can be improved upon.
-    controller.pages.forEach(page => controller.initComponent(page));
-    controller.pages.forEach(page => controller.initComponent(page.lists[0]));
+    controller.renderComponent("main", controller.pages[controller.pages.length - 1].htmlFrag);
+    controller.initComponent(controller.pages[controller.pages.length - 1]);
+    controller.initComponent(controller.pages[controller.pages.length - 1].lists[0]);
   }  
 }
 
 class Controller {
   constructor() {    
-    this.pages = [new Page(pageIdCounter++)]
-
-    this.renderComponent("body", this.pages[this.pages.length - 1].htmlFrag);
+    this.pages = [new Page(pageIdCounter++)];
+    this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);
     this.initComponent(this.pages[this.pages.length - 1]);
     this.initComponent(this.pages[this.pages.length - 1].lists[0]);
   }
   renderComponent(location, htmlFrag) {    
-    document.querySelector(location).innerHTML += htmlFrag;
+    document.querySelector(location).insertAdjacentHTML("beforeend", htmlFrag);
     console.log("Component Rendered");
   }
 
