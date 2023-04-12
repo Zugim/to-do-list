@@ -1,5 +1,6 @@
 pageIdCounter = 0;
-listIdCounter = 0;
+// First element for complexLists, second element for simpleLists
+listIdCounters = [0, 0];
 taskIdCounter = 0;
 
 class Element {
@@ -23,54 +24,59 @@ class Task {
   }
 }
 
-class List {
+class ComplexList {
   constructor(id, title) {
-    this.id = `list${id}`;
+    this.id = `complexList${id}`;
     this.title = title;
-  }
-}
-
-class SimpleList extends List {
-  constructor(id, title) {
-    super(id, title);
     this.tasks = [];
-    this.htmlFrag = `
-    <div id="${this.id}">
-      <h1>${this.title}</h1>
-      <ul> 
-        </li class="emptyList">Empty list</li>
-      </ul>
-    </div>
-    `;
-  }  
-}
-
-class ComplexList extends List {
-  constructor(id, title) {
-    super(id, title);
-    this.tasks = ["TEST"];
     this.htmlFrag = `
     <div id="${this.id}">
       <h1>${this.title}</h1>
       <button>Add new task</button>
       <ul> 
-        </li class="emptyList">Empty list</li>
+        ${this.tasks.length === 0 ? 
+                      '<li class="placeholderTask">Empty list</li>' :
+                        this.tasks.map(task => `<li class="${task}">${task}</li>`).join('')}        
       </ul>
     </div>
     `;
-    this.elements = [new Element("elAddNewTaskButton", `#${this.id} > button`, true, this.addTask)];
+    // Using bind(this) so addTask refers to the correct this - Need to research
+    this.elements = [new Element("elAddNewTaskButton", `#${this.id} > button`, true, this.addTask.bind(this))];
   }
 
-  addTask() {
-    console.log("You Clicked The Add Task Button!");    
+  addTask() {    
+    if (document.querySelector(`#${this.id} > ul > .placeholderTask`)) {
+      document.querySelector(`#${this.id} > ul > .placeholderTask`).remove();
+    } 
+
+    this.tasks.push(new Task(taskIdCounter++, "Test 1", "Test"));
+    controller.renderComponent(`#${this.id} > ul`, this.tasks[this.tasks.length -1].htmlFrag);    
+  }  
+}
+
+class SimpleList {
+  constructor(id, title) {
+    this.id = `simpleList${id}`;
+    this.title = title;
+    this.tasks = [];
+    this.htmlFrag = `
+    <div id="${this.id}">
+      <h1>${this.title}</h1>
+      <ul> 
+      ${this.tasks.length === 0 ? 
+        '<li class="placeholderTask">Empty list</li>' :
+          '<li class="notEmptyList">Not Empty list</li>'}  
+      </ul>
+    </div>
+    `;
   }  
 }
 
 class Page {
   constructor(id) {
     this.id = `page${id}`;    
-    this.lists = [new ComplexList(listIdCounter++, "To Do List"),
-                  new SimpleList(listIdCounter++, "Completed List")];
+    this.lists = [new ComplexList(listIdCounters[0]++, "To Do List"),
+                  new SimpleList(listIdCounters[1]++, "Completed List")];
     this.htmlFrag = `
     <div id="${this.id}">
       <h1>4/10/2023</h1>
@@ -82,7 +88,6 @@ class Page {
   } 
   
   addPage() {
-    console.log("You Clicked The Add Page Button!");
     controller.pages.push(new Page(pageIdCounter++));    
     controller.renderComponent("main", controller.pages[controller.pages.length - 1].htmlFrag);
     controller.initComponent(controller.pages[controller.pages.length - 1]);
@@ -99,22 +104,15 @@ class Controller {
   }
   renderComponent(location, htmlFrag) {    
     document.querySelector(location).insertAdjacentHTML("beforeend", htmlFrag);
-    console.log("Component Rendered");
   }
 
   initComponent(component) {    
     component.elements.forEach(element => {
       element.el = document.querySelector(`${element.selector}`);
-      console.log("Component Initialized");
-      console.log(`Selector: ${element.selector} Element: ${element.el}`);
 
       if (element.clickable) {
-        console.log("Is Clickable");
         element.el.addEventListener("click", element.callBack);
-        console.log("Event Listener Bound")
-      } else {
-        console.log("Not Clickable");
-      }
+      }      
     });  
   }
 }
