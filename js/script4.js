@@ -14,13 +14,28 @@ class Element {
 }
 
 class Task {
-  constructor(id, title, tag) {
+  constructor(id, title, tag, list) {
     this.id = `task${id}`;
     this.title = title;
     this.tag = tag;
+    this.list = list;
     this.htmlFrag = `
     <li id="${this.id}">${this.title} - ${this.tag} - <button id="${this.id}Delete">delete</button></li>
-    `
+    `;
+    this.elements = [new Element("elDeleteTaskButton", `#${this.id} > button`,true, this.deleteTask.bind(this))];
+  }
+
+  deleteTask() {
+    console.log("Delete Clicked");
+    document.querySelector(`#${this.id}`).remove();
+    controller.pages[this.list.id.replace(/\D/g,'')].lists[0].tasks = 
+      controller.pages[this.list.id.replace(/\D/g,'')].lists[0].tasks.filter(task => task.id !== this.id);
+    console.log(controller.pages[this.list.id.replace(/\D/g,'')].lists[0]);
+    console.log(controller.pages[this.list.id.replace(/\D/g,'')].lists[0].tasks.length);
+    if (controller.pages[this.list.id.replace(/\D/g,'')].lists[0].tasks.length === 0) {
+      controller.renderComponent(`#${controller.pages[this.list.id.replace(/\D/g,'')].lists[0].id} > ul`,
+                                  '<li class="placeholderTask">Empty list</li>');
+    }
   }
 }
 
@@ -49,8 +64,12 @@ class ComplexList {
       document.querySelector(`#${this.id} > ul > .placeholderTask`).remove();
     } 
 
-    this.tasks.push(new Task(taskIdCounter++, "Test 1", "Test"));
-    controller.renderComponent(`#${this.id} > ul`, this.tasks[this.tasks.length -1].htmlFrag);    
+    this.tasks.push(new Task(taskIdCounter++, 
+                             prompt("Please enter the tasks title"), 
+                             prompt("Please enter the tasks tag"),
+                             controller.pages[this.id.replace(/\D/g,'')].lists[0]));
+    controller.renderComponent(`#${this.id} > ul`, this.tasks[this.tasks.length -1].htmlFrag);  
+    controller.initComponent(this.tasks[this.tasks.length -1]);  
   }  
 }
 
