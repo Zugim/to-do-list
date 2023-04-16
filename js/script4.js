@@ -17,7 +17,7 @@ class Task {
   constructor(id, title, tag, list) {
     this.idFlag = "task";
     this.idNum = id;
-    this.id = `${this.idFlag}${id}`;    
+    this.id = `${this.idFlag}${id}`;
     this.title = title;
     this.tag = tag;
     this.list = list;
@@ -25,7 +25,7 @@ class Task {
     <li id="${this.id}"><input type="checkbox" name="complete"/>${this.title} - ${this.tag} - <button id="${this.id}Delete">delete</button></li>
     `;
     this.elements = [new Element("elDeleteTaskButton", `#${this.id} > button`, "click", this.deleteTask.bind(this)),
-                     new Element("elCheckComplete", `#${this.id} > input[type=checkbox]`, "change", this.moveTask.bind(this))];
+                     new Element("elCheckComplete", `#${this.id} > input[type=checkbox]`, "change", function() {this.moveTask("move")}.bind(this))];
   }
 
   deleteTask() {
@@ -38,7 +38,7 @@ class Task {
     }
   }
 
-  moveTask() {    
+  moveTask(addFunctionality) {    
     this.deleteTask();
 
     if(this.list.idFlag === "complexList") {
@@ -50,14 +50,7 @@ class Task {
       controller.pages[this.list.idNum].lists[0].tasks.push(this);      
     }
 
-    //this.list.addTask(true);
-    
-    if (document.querySelector(`#${this.list.id} > ul > .placeholderTask`)) {
-      document.querySelector(`#${this.list.id} > ul > .placeholderTask`).remove();
-    } 
-    
-    controller.renderComponent(`#${this.list.id} > ul`, this.list.tasks[this.list.tasks.length -1].htmlFrag);  
-    controller.initComponent(this.list.tasks[this.list.tasks.length -1]);  
+    this.list.addTask(addFunctionality);    
   }
 }
 
@@ -71,7 +64,7 @@ class List {
     this.htmlFrag = `
     <div id="${this.id}">
       <h1>${this.title}</h1>
-      <button>Add new task</button>
+      ${this.idFlag === "complexList" ? `<button>Add new task</button>` : ``}
       <ul> 
         ${this.tasks.length === 0 ? 
                       '<li class="placeholderTask">Empty list</li>' :
@@ -80,26 +73,20 @@ class List {
     </div>
     `;
     // Using bind(this) so addTask refers to the correct this - Need to research
-    this.elements = [new Element("elAddNewTaskButton", `#${this.id} > button`, "click", this.addTask.bind(this))];
+    this.elements = [new Element("elAddNewTaskButton", `#${this.id} > button`, "click", function() {this.addTask("new")}.bind(this))];
   }
 
-  addTask(moved) {    
+  addTask(addFunctionality) {    
     if (document.querySelector(`#${this.id} > ul > .placeholderTask`)) {
       document.querySelector(`#${this.id} > ul > .placeholderTask`).remove();
     }
     
-    // if(!moved) {
-    //      this.tasks.push(new Task(taskIdCounter++, 
-    //                      prompt("Please enter the tasks title"), 
-    //                      prompt("Please enter the tasks tag"),
-    //                      controller.pages[this.idNum].lists[0])); 
-    // }
-    
-    this.tasks.push(new Task(taskIdCounter++, 
-                    prompt("Please enter the tasks title"), 
-                    prompt("Please enter the tasks tag"),
-                    controller.pages[this.idNum].lists[0])); 
-    
+    if(addFunctionality === "new") {
+      this.tasks.push(new Task(taskIdCounter++, 
+                      prompt("Please enter the tasks title"), 
+                      prompt("Please enter the tasks tag"),
+                      controller.pages[this.idNum].lists[0])); 
+    } 
 
     controller.renderComponent(`#${this.id} > ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
     controller.initComponent(this.tasks[this.tasks.length -1]); 
