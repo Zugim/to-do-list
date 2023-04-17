@@ -46,8 +46,6 @@ class Task {
   }
 
   displayOptions() {
-    console.log("Options Opened");
-
     if(!this.optionsDisplayed) {
       this.optionsDisplayed = true;
 
@@ -59,9 +57,26 @@ class Task {
       </ul>
       </div>
       `);
+
+      let callback = function(event) {
+        if(!event.target.closest(`#${this.id} > .taskOptions`)) {
+          event.stopPropagation();
+          console.log("oh no");
+          console.log(this.optionsDisplayed);
+          this.optionsDisplayed = false;
+          console.log(this.optionsDisplayed);
+          document.querySelector(`#${this.id} > .taskOptions`).remove();
+          window.removeEventListener("mouseup", callback);
+        } else {
+          console.log("yay");
+        }
+      }.bind(this);
+
+      window.addEventListener("mouseup", callback);
+
     } else {
       this.optionsDisplayed = false;
-      document.querySelector(`#${this.id} > .taskOptions`).remove();;
+      document.querySelector(`#${this.id} > .taskOptions`).remove();
     }
   }
 
