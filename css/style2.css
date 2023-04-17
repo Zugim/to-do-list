@@ -1,0 +1,62 @@
+body {
+    background-color:#fbfbfb;
+}
+
+main {
+    position: relative;
+
+    width: 420px;
+    height: 100%;
+
+    box-shadow: 5px 0px 0px 0px rgba(0,0,0,0.15);
+
+    background-color: #f9ea85;
+}
+
+ul {
+    padding: 0;
+
+    list-style: none;
+}
+
+/* Task Styling */
+li[id^=task] {
+    padding: 5px 5px 5px 15px;
+
+    background-color:#fbfbfb;
+}
+
+.stretch {
+    display: flex;   
+}
+
+.taskTitle {
+    margin-left: 5px;
+}
+
+.taskEllipsis {
+    height: 16px;
+
+    align-self: center;
+
+    margin-left: auto;
+}
+
+.taskTag {
+    margin-top: -5px;
+    margin-left:28px;
+}
+
+.taskOptions {
+    position: absolute;
+    right: 16px;
+
+    padding: 5px 15px;
+
+    background-color: #eee;  
+}
+
+
+
+
+

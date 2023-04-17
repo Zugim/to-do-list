@@ -21,11 +21,48 @@ class Task {
     this.title = title;
     this.tag = tag;
     this.list = list;
+    this.optionsDisplayed = false;
     this.htmlFrag = `
-    <li id="${this.id}"><input type="checkbox" name="complete"/><span class="taskTitle">${this.title}</span> - ${this.tag} <button class="delete">Delete</button></li>
+    <li id="${this.id}">
+      <div class="taskContainerTop stretch">
+        <input class="taskCheck" type="checkbox" name="complete"/>
+        <span class="taskTitle">${this.title}</span>
+        <img class="taskEllipsis" src="../img/ellipsis.svg" alt="ellipsis">
+      </div>
+      ${this.optionsDisplayed ? `
+      <div class="taskOptions">
+        <ul>
+         <li class="taskRename">Rename</li>
+         <li class="taskDelete">Delete</li>
+       </ul>
+      </div>
+      ` : ``}   
+      <div class="taskContainerBottom stretch"><span class="taskTag">${this.tag}</span></div>
+    </li>
     `;
-    this.elements = [new Element("elDeleteTaskButton", `#${this.id} > button`, "click", this.deleteTask.bind(this)),
-                     new Element("elCheckComplete", `#${this.id} > input[type=checkbox]`, "change", function() {this.moveTask("move")}.bind(this))];
+    this.elements = [new Element("elTask", `#${this.id}`),
+                     new Element("elTaskCheck", `#${this.id} .taskCheck`, "change", function() {this.moveTask("move")}.bind(this)),
+                     new Element("elTaskEllipsis", `#${this.id} .taskEllipsis`, "click", this.displayOptions.bind(this))];
+  }
+
+  displayOptions() {
+    console.log("Options Opened");
+
+    if(!this.optionsDisplayed) {
+      this.optionsDisplayed = true;
+
+      document.querySelector(`#${this.id} > .taskContainerTop`).insertAdjacentHTML("afterend", `
+      <div class="taskOptions">
+        <ul>
+        <li class="taskRename">Rename</li>
+        <li class="taskDelete">Delete</li>
+      </ul>
+      </div>
+      `);
+    } else {
+      this.optionsDisplayed = false;
+      document.querySelector(`#${this.id} > .taskOptions`).remove();;
+    }
   }
 
   deleteTask() {
@@ -59,10 +96,10 @@ class Task {
     this.list.addTask(addFunctionality);  
     
     if(this.list.idFlag === "complexList") {
-      this.elements.find(element => element.name === "elCheckComplete").el.checked = false;    
+      this.elements.find(element => element.name === "elTaskCheck").el.checked = false;    
     }
     else if(this.list.idFlag === "simpleList") {
-      this.elements.find(element => element.name === "elCheckComplete").el.checked = true;      
+      this.elements.find(element => element.name === "elTaskCheck").el.checked = true;      
     }
   }
 }
