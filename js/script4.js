@@ -149,6 +149,7 @@ class Controller {
     this.initComponent(this.pages[this.pages.length - 1]);
     this.initComponent(this.pages[this.pages.length - 1].lists[0]);
   }
+
   renderComponent(location, htmlFrag) {    
     document.querySelector(location).insertAdjacentHTML("beforeend", htmlFrag);
   }
