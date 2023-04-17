@@ -79,7 +79,7 @@ div[id^=simpleList] .taskTitle {
 
 @media only screen and (max-width: 450px) {
     main {
-        min-width: 100%;
-        background-color: red;
+        width: 100%;
+        min-width: 250px;
     }
   }
