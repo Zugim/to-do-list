@@ -27,7 +27,7 @@ class Task {
       <div class="taskContainerTop stretch">
         <input class="taskCheck" type="checkbox" name="complete"/>
         <span class="taskTitle">${this.title}</span>
-        <img class="taskEllipsis" src="../img/ellipsis.svg" alt="ellipsis">
+        <img class="taskEllipsis" src="img/ellipsis.svg" alt="ellipsis">
       </div>
       ${this.optionsDisplayed ? `
       <div class="taskOptions">
