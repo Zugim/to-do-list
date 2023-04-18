@@ -25,23 +25,17 @@ class Task {
     this.htmlFrag = `
     <li id="${this.id}">
       <div class="taskContainerTop stretch">
-        <input class="taskCheck" type="checkbox" name="complete"/>
+        <input class="taskCheckbox" type="checkbox" name="complete"/>
         <span class="taskTitle">${this.title}</span>
-        <img class="taskEllipsis" src="img/ellipsis.svg" alt="ellipsis">
+        <img class="taskEllipsis" src="img/ellipsis.svg" alt="task options">
+      </div>      
+      <div class="taskContainerBottom stretch">
+        <span class="taskTag">${this.tag}</span>
       </div>
-      ${this.optionsDisplayed ? `
-      <div class="taskOptions">
-        <ul>
-         <li class="taskRename">Rename</li>
-         <li class="taskDelete">Delete</li>
-       </ul>
-      </div>
-      ` : ``}   
-      <div class="taskContainerBottom stretch"><span class="taskTag">${this.tag}</span></div>
     </li>
     `;
     this.elements = [new Element("elTask", `#${this.id}`),
-                     new Element("elTaskCheck", `#${this.id} .taskCheck`, "change", function() {this.moveTask("move")}.bind(this)),
+                     new Element("eltaskCheckbox", `#${this.id} .taskCheckbox`, "change", function() {this.moveTask("move")}.bind(this)),
                      new Element("elTaskEllipsis", `#${this.id} .taskEllipsis`, "click", this.displayOptions.bind(this))];
   }
 
@@ -49,32 +43,30 @@ class Task {
     if(!this.optionsDisplayed) {
       this.optionsDisplayed = true;
 
-      document.querySelector(`#${this.id} > .taskContainerTop`).insertAdjacentHTML("afterend", `
+      document.querySelector(`#${this.id} .taskContainerTop`).insertAdjacentHTML("afterend", `
       <div class="taskOptions">
         <ul>
-        <li class="taskRename">Rename</li>
-        <li class="taskDelete">Delete</li>
-      </ul>
+          <li class="taskRename">Rename</li>
+          <li class="taskDelete">Delete</li>
+        </ul>
       </div>
       `);
 
       let callback = function(event) {
-        if(!event.target.closest(`#${this.id} > .taskOptions`) && !event.target.closest(`#${this.id} .taskEllipsis`)) {          
+        if(!event.target.closest(`#${this.id} .taskOptions`) && !event.target.closest(`#${this.id} .taskEllipsis`)) {          
           this.optionsDisplayed = false;
-          if(document.querySelector(`#${this.id} > .taskOptions`)) {
-            document.querySelector(`#${this.id} > .taskOptions`).remove();
+          if(document.querySelector(`#${this.id} .taskOptions`)) {
+            document.querySelector(`#${this.id} .taskOptions`).remove();
           }
           window.removeEventListener("mouseup", callback);
-        } else {
-          console.log("yay");
-        }
+        } 
       }.bind(this);
 
       window.addEventListener("click", callback);
 
     } else {
       this.optionsDisplayed = false;
-      document.querySelector(`#${this.id} > .taskOptions`).remove();
+      document.querySelector(`#${this.id} .taskOptions`).remove();
     }
   }
 
@@ -84,7 +76,7 @@ class Task {
       controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).tasks.filter(task => task.id !== this.id);
     if (controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).tasks.length === 0) {
       controller.renderComponent(`#${controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).id} > ul`,
-                                  '<li class="placeholderTask">Empty list</li>');
+                                  '<li class="taskEmpty">Empty list</li>');
     }
     
     if(document.querySelector(`#${controller.pages[this.list.idNum].id} > .titleCont > p`)) {
@@ -109,10 +101,10 @@ class Task {
     this.list.addTask(addFunctionality);  
     
     if(this.list.idFlag === "complexList") {
-      this.elements.find(element => element.name === "elTaskCheck").el.checked = false;    
+      this.elements.find(element => element.name === "eltaskCheckbox").el.checked = false;    
     }
     else if(this.list.idFlag === "simpleList") {
-      this.elements.find(element => element.name === "elTaskCheck").el.checked = true;      
+      this.elements.find(element => element.name === "eltaskCheckbox").el.checked = true;      
     }
   }
 }
@@ -126,23 +118,25 @@ class List {
     this.tasks = [];
     this.htmlFrag = `
     <div id="${this.id}">
-      <h2>${this.title}</h2>
-      ${this.idFlag === "complexList" ? `<button>Add new task</button>` : ``}
-      <ul> 
+      <div class="listTitleCont stretch">
+        <h2 class="listTitle">${this.title}</h2>
+        ${this.idFlag === "complexList" ? `<img class="listPlus" src="img/plus.svg" alt="add task">` : ``}
+      </div>
+      <ul class="listList"> 
         ${this.tasks.length === 0 ? 
-                      '<li class="placeholderTask">Empty list</li>' :
+                      '<li class="taskEmpty">Empty list</li>' :
                         this.tasks.map(task => `<li class="${task}">${task}</li>`).join('')}        
       </ul>
     </div>
     `;
     // Using bind(this) so addTask refers to the correct this - Need to research
-    this.elements = [new Element("elAddNewTaskButton", `#${this.id} > button`, "click", function() {this.addTask("new")}.bind(this)),
-                     new Element("elIncompleteComplete", `#${this.id} > p`)];
+    this.elements = [new Element("elAddNewTaskButton", `#${this.id} .listPlus`, "click", function() {this.addTask("new")}.bind(this)),
+                     new Element("elIncompleteComplete", `#${this.id} p`)];
   }
 
   addTask(addFunctionality) {    
-    if (document.querySelector(`#${this.id} > ul > .placeholderTask`)) {
-      document.querySelector(`#${this.id} > ul > .placeholderTask`).remove();
+    if (document.querySelector(`#${this.id} .taskEmpty`)) {
+      document.querySelector(`#${this.id} .taskEmpty`).remove();
     }
     
     if(addFunctionality === "new") {
@@ -152,12 +146,12 @@ class List {
                       controller.pages[this.idNum].lists[0]));
     }     
 
-    controller.renderComponent(`#${this.id} > ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
+    controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
     controller.initComponent(this.tasks[this.tasks.length -1]); 
 
-    document.querySelector(`#${controller.pages[this.idNum].id} > .titleCont > p`).remove();
+    document.querySelector(`#${controller.pages[this.idNum].id} .titleCont p`).remove();
 
-    controller.renderComponent(`#${controller.pages[this.idNum].id} > .titleCont`, 
+    controller.renderComponent(`#${controller.pages[this.idNum].id} .titleCont`, 
                               `<p>${controller.pages[this.idNum].lists[0].tasks.length} incomplete, ${controller.pages[this.idNum].lists[1].tasks.length} complete</p>`);                                 
   }  
 }
@@ -173,7 +167,7 @@ class Page {
                   new List(listIdCounters[1]++, "Completed List", "simpleList")];
     this.htmlFrag = `
     <div id="${this.id}">
-      <div class="titleCont">
+      <div class="pageTitleCont">
       <h1>${this.title} - ${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</h1>      
       <p>${this.lists[0].tasks.length} incomplete, ${this.lists[1].tasks.length} complete</p>
       </div>

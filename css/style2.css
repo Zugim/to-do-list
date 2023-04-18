@@ -1,4 +1,15 @@
+p, li {    
+    font-family: 'Merriweather', serif;
+}
+
+h1, h2, h3, button {
+    font-family: 'Karla', sans-serif;
+}
+
 body {
+    font-size: 16px;
+    color: #222;
+
     background-color:#fbfbfb;
 }
 
@@ -19,6 +30,23 @@ ul {
     list-style: none;
 }
 
+.stretch {
+    display: flex;   
+}
+
+/* List Styling */
+.listTitleCont {
+    padding: 5px;
+}
+
+.listPlus {
+    height: 1em;
+
+    align-self: center;
+
+    margin-left: auto;
+}
+
 /* Task Styling */
 li[id^=task] {
     padding: 5px 5px 5px 15px;
@@ -26,16 +54,12 @@ li[id^=task] {
     background-color:#fbfbfb;
 }
 
-.stretch {
-    display: flex;   
-}
-
 .taskTitle {
     margin-left: 5px;
 }
 
 .taskEllipsis {
-    height: 16px;
+    height: 1em;
 
     align-self: center;
 
@@ -49,8 +73,9 @@ li[id^=task] {
 
 .taskOptions {
     position: absolute;
-    right: 16px;
+    right: 13px;
 
+    margin-top: 0;
     padding: 5px 15px;
 
     background-color: #eee;  
