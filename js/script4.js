@@ -59,20 +59,18 @@ class Task {
       `);
 
       let callback = function(event) {
-        if(!event.target.closest(`#${this.id} > .taskOptions`)) {
-          event.stopPropagation();
-          console.log("oh no");
-          console.log(this.optionsDisplayed);
+        if(!event.target.closest(`#${this.id} > .taskOptions`) && !event.target.closest(`#${this.id} .taskEllipsis`)) {          
           this.optionsDisplayed = false;
-          console.log(this.optionsDisplayed);
-          document.querySelector(`#${this.id} > .taskOptions`).remove();
+          if(document.querySelector(`#${this.id} > .taskOptions`)) {
+            document.querySelector(`#${this.id} > .taskOptions`).remove();
+          }
           window.removeEventListener("mouseup", callback);
         } else {
           console.log("yay");
         }
       }.bind(this);
 
-      window.addEventListener("mouseup", callback);
+      window.addEventListener("click", callback);
 
     } else {
       this.optionsDisplayed = false;
