@@ -52,6 +52,9 @@ class Task {
       </div>
       `);
 
+      document.querySelector(`#${this.id} .taskRename`).addEventListener("click", this.renameTask.bind(this));
+      document.querySelector(`#${this.id} .taskDelete`).addEventListener("click", this.deleteTask.bind(this));
+      
       let callback = function(event) {
         if(!event.target.closest(`#${this.id} .taskOptions`) && !event.target.closest(`#${this.id} .taskEllipsis`)) {          
           this.optionsDisplayed = false;
@@ -70,6 +73,32 @@ class Task {
     }
   }
 
+  renameTask() {
+    console.log("renamed");
+    this.title = prompt("Please enter a new title")
+    this.htmlFrag = `
+    <li id="${this.id}">
+      <div class="taskContainerTop stretch">
+        <input class="taskCheckbox" type="checkbox" name="complete"/>
+        <span class="taskTitle">${this.title}</span>
+        <img class="taskEllipsis" src="img/ellipsis.svg" alt="task options">
+      </div>      
+      <div class="taskContainerBottom stretch">
+        <span class="taskTag">${this.tag}</span>
+      </div>
+    </li>
+    `;
+    if(document.querySelector(".taskOptions")) {
+      document.querySelector(".taskOptions").remove();
+    }
+    
+    this.list.tasks.forEach(task => document.querySelector(`#${task.id}`).remove());
+    this.list.tasks.forEach(task => {
+      controller.renderComponent(`#${task.list.id} .listList`, task.htmlFrag);
+      controller.initComponent(task);     
+    });
+  }
+
   deleteTask() {
     document.querySelector(`#${this.id}`).remove();
     controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).tasks = 
@@ -79,10 +108,10 @@ class Task {
                                   '<li class="taskEmpty">Empty list</li>');
     }
     
-    if(document.querySelector(`#${controller.pages[this.list.idNum].id} > .titleCont > p`)) {
-      document.querySelector(`#${controller.pages[this.list.idNum].id} > .titleCont > p`).remove();
+    if(document.querySelector(`#${controller.pages[this.list.idNum].id} > .pageTitleCont > p`)) {
+      document.querySelector(`#${controller.pages[this.list.idNum].id} > .pageTitleCont > p`).remove();
     }
-    controller.renderComponent(`#${controller.pages[this.list.idNum].id} > .titleCont`, 
+    controller.renderComponent(`#${controller.pages[this.list.idNum].id} > .pageTitleCont`, 
                                `<p>${controller.pages[this.list.idNum].lists[0].tasks.length} incomplete, ${controller.pages[this.list.idNum].lists[1].tasks.length} complete</p>`);
   }
 
@@ -149,9 +178,9 @@ class List {
     controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
     controller.initComponent(this.tasks[this.tasks.length -1]); 
 
-    document.querySelector(`#${controller.pages[this.idNum].id} .titleCont p`).remove();
+    document.querySelector(`#${controller.pages[this.idNum].id} .pageTitleCont p`).remove();
 
-    controller.renderComponent(`#${controller.pages[this.idNum].id} .titleCont`, 
+    controller.renderComponent(`#${controller.pages[this.idNum].id} .pageTitleCont`, 
                               `<p>${controller.pages[this.idNum].lists[0].tasks.length} incomplete, ${controller.pages[this.idNum].lists[1].tasks.length} complete</p>`);                                 
   }  
 }
