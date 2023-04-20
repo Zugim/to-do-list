@@ -199,20 +199,12 @@ class Page {
       <div class="pageTitleCont">
       <h1>${this.title} - ${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</h1>      
       <p>${this.lists[0].tasks.length} incomplete, ${this.lists[1].tasks.length} complete</p>
-      </div>
-      <button>Add new list</button>
+      </div>      
       ${this.lists.map(item => `${item.htmlFrag}`).join("")}
     </div>
     `;  
-    this.elements = [new Element("elAddNewListButton", `#${this.id} > button`, "click", this.addPage)];
-  } 
-  
-  addPage() {
-    controller.pages.push(new Page(pageIdCounter++, prompt("Please enter the pages title")));    
-    controller.renderComponent("main", controller.pages[controller.pages.length - 1].htmlFrag);
-    controller.initComponent(controller.pages[controller.pages.length - 1]);
-    controller.initComponent(controller.pages[controller.pages.length - 1].lists[0]);
-  }  
+    this.elements = [];
+  }    
 }
 
 class Controller {
@@ -221,6 +213,16 @@ class Controller {
     this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);
     this.initComponent(this.pages[this.pages.length - 1]);
     this.initComponent(this.pages[this.pages.length - 1].lists[0]);
+
+    this.renderComponent("main", '<img id="pagePlus" src="img/plus.svg" alt="add page">');
+    document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
+    console.log(document.querySelector("#pagePlus").style.top);
+    console.log(window.innerHeight);
+    document.querySelector("#pagePlus").style.right += `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    window.addEventListener("resize", () => {
+      console.log("resized!");
+      document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    });
   }
 
   renderComponent(location, htmlFrag) {    
@@ -238,6 +240,14 @@ class Controller {
       }
     });  
   }
+
+  addPage() {
+    this.pages.push(new Page(pageIdCounter++, prompt("Please enter the pages title")));    
+    this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);    
+    this.initComponent(this.pages[this.pages.length - 1]);
+    this.initComponent(this.pages[this.pages.length - 1].lists[0]);
+    document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+  }  
 }
 
 let controller = new Controller();
