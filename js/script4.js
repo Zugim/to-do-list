@@ -208,20 +208,24 @@ class Page {
 }
 
 class Controller {
-  constructor() {    
+  constructor() {  
+    this.setDocHeight()  
     this.pages = [new Page(pageIdCounter++, prompt("Please enter the pages title"))];
     this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);
     this.initComponent(this.pages[this.pages.length - 1]);
     this.initComponent(this.pages[this.pages.length - 1].lists[0]);
 
-    this.renderComponent("main", '<img id="pagePlus" src="img/plus.svg" alt="add page">');
+    this.renderComponent("body", '<img id="pagePlus" src="img/plus.svg" alt="add page">');
     document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
     console.log(document.querySelector("#pagePlus").style.top);
     console.log(window.innerHeight);
     document.querySelector("#pagePlus").style.right += `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    //document.querySelector("#pagePlus").style.top += `${document.querySelector("body").scrollHeight - document.querySelector("#pagePlus").offsetHeight}px`;
     window.addEventListener("resize", () => {
+      this.setDocHeight() 
       console.log("resized!");
       document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+      //document.querySelector("#pagePlus").style.top += `${document.querySelector("body").clientHeight - document.querySelector("#pagePlus").offsetHeight}px`;
     });
   }
 
@@ -241,13 +245,20 @@ class Controller {
     });  
   }
 
-  addPage() {
+  addPage() {   
+    this.setDocHeight()  
     this.pages.push(new Page(pageIdCounter++, prompt("Please enter the pages title")));    
     this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);    
     this.initComponent(this.pages[this.pages.length - 1]);
     this.initComponent(this.pages[this.pages.length - 1].lists[0]);
-    document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    //document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    //document.querySelector("#pagePlus").style.top += `${document.querySelector("body").scrollHeight - document.querySelector("#pagePlus").offsetHeight}px`;
   }  
+
+  setDocHeight() {
+    document.querySelector("html").style.height = `${window.innerHeight}px`;
+    document.querySelector("body").style.height = `${window.innerHeight}px`;
+  }
 }
 
 let controller = new Controller();
