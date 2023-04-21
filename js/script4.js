@@ -263,18 +263,17 @@ class Page {
   deletePage() {
     document.querySelector(`#${this.id}`).remove();
     controller.pages = controller.pages.filter(page => page.id !== this.id);
-    // List placeholder code goes here   
+    if(controller.pages.length === 0) {  
+      document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started 👍</h2>`);
+    }
   }
 }
 
 class Controller {
   constructor() {  
     this.setDocHeight()  
-    this.pages = [];
-    //this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);
-    //this.initComponent(this.pages[this.pages.length - 1]);
-    //this.initComponent(this.pages[this.pages.length - 1].lists[0]);
-
+    this.pages = [];   
+    document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started 👍</h2>`);
     this.renderComponent("body", '<img id="pagePlus" src="img/plus.svg" alt="add page">');
     document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
     document.querySelector("#pagePlus").style.right += `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
@@ -301,6 +300,9 @@ class Controller {
   }
 
   addPage() {   
+    if(document.querySelector("#empty")) {
+      document.querySelector("#empty").remove();
+    }
     this.setDocHeight()  
     this.pages.push(new Page(pageIdCounter++, prompt("Please enter the pages title")));    
     this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);    

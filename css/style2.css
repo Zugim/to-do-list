@@ -35,6 +35,10 @@ ul {
     display: flex;   
 }
 
+#empty {
+    background-color: #fff;
+}
+
 /* Page Styling */
 main > div[id^=page] {
     background-color: #fff;
