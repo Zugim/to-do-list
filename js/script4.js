@@ -61,7 +61,7 @@ class Task {
           if(document.querySelector(`#${this.id} .taskOptions`)) {
             document.querySelector(`#${this.id} .taskOptions`).remove();
           }
-          window.removeEventListener("mouseup", callback);
+          window.removeEventListener("click", callback);
         } 
       }.bind(this);
 
@@ -74,7 +74,6 @@ class Task {
   }
 
   renameTask() {
-    console.log("renamed");
     this.title = prompt("Please enter a new title")
     this.htmlFrag = `
     <li id="${this.id}">
@@ -97,6 +96,13 @@ class Task {
       controller.renderComponent(`#${task.list.id} .listList`, task.htmlFrag);
       controller.initComponent(task);     
     });
+
+    if(this.list.idFlag === "complexList") {
+      this.elements.find(element => element.name === "eltaskCheckbox").el.checked = false;    
+    }
+    else if(this.list.idFlag === "simpleList") {
+      this.elements.find(element => element.name === "eltaskCheckbox").el.checked = true;      
+    }
   }
 
   deleteTask() {
@@ -107,12 +113,11 @@ class Task {
       controller.renderComponent(`#${controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).id} > ul`,
                                   '<li class="taskEmpty">Empty list</li>');
     }
-    
-    if(document.querySelector(`#${controller.pages[this.list.idNum].id} > .pageTitleCont > p`)) {
-      document.querySelector(`#${controller.pages[this.list.idNum].id} > .pageTitleCont > p`).remove();
-    }
-    controller.renderComponent(`#${controller.pages[this.list.idNum].id} > .pageTitleCont`, 
-                               `<p>${controller.pages[this.list.idNum].lists[0].tasks.length} incomplete, ${controller.pages[this.list.idNum].lists[1].tasks.length} complete</p>`);
+
+    document.querySelector(`#${controller.pages[this.list.idNum].id} .pageUncompComp`).remove();
+
+    document.querySelector(`#${controller.pages[this.list.idNum].id} .pageTitleCont`).insertAdjacentHTML("afterend",
+                            `<p class="pageUncompComp">${this.list.page.lists[0].tasks.length} incomplete, ${this.list.page.lists[1].tasks.length} complete</p>`);
   }
 
   moveTask(addFunctionality) {    
@@ -139,11 +144,12 @@ class Task {
 }
 
 class List {
-  constructor(id, title, idFlag) {
+  constructor(id, title, idFlag, page) {
     this.idFlag = idFlag;
     this.idNum = id;
     this.id = `${this.idFlag}${id}`;    
     this.title = title;
+    this.page = page;
     this.tasks = [];
     this.htmlFrag = `
     <div id="${this.id}">
@@ -159,9 +165,8 @@ class List {
     </div>
     `;
     // Using bind(this) so addTask refers to the correct this - Need to research
-    this.elements = [new Element("elAddNewTaskButton", `#${this.id} .listPlus`, "click", function() {this.addTask("new")}.bind(this)),
-                     new Element("elIncompleteComplete", `#${this.id} p`)];
-  }
+    this.elements = [new Element("elAddNewTaskButton", `#${this.id} .listPlus`, "click", function() {this.addTask("new")}.bind(this))];
+  }  
 
   addTask(addFunctionality) {    
     if (document.querySelector(`#${this.id} .taskEmpty`)) {
@@ -178,54 +183,104 @@ class List {
     controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
     controller.initComponent(this.tasks[this.tasks.length -1]); 
 
-    document.querySelector(`#${controller.pages[this.idNum].id} .pageTitleCont p`).remove();
+    document.querySelector(`#${controller.pages[this.idNum].id} .pageUncompComp`).remove();
 
-    controller.renderComponent(`#${controller.pages[this.idNum].id} .pageTitleCont`, 
-                              `<p>${controller.pages[this.idNum].lists[0].tasks.length} incomplete, ${controller.pages[this.idNum].lists[1].tasks.length} complete</p>`);                                 
+    document.querySelector(`#${controller.pages[this.idNum].id} .pageTitleCont`).insertAdjacentHTML("afterend",
+                            `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
   }  
 }
 
 class Page {
-  constructor(id, title) {
+  constructor(id, title, controller) {
     this.idFlag = "page";
     this.idNum = id; 
     this.id = `${this.idFlag}${id}`;
     this.title = title;
+    this.controller = controller;
     this.date = new Date();      
-    this.lists = [new List(listIdCounters[0]++, "To Do List", "complexList"),
-                  new List(listIdCounters[1]++, "Completed List", "simpleList")];
+    this.lists = [new List(listIdCounters[0]++, "To Do List", "complexList", this),
+                  new List(listIdCounters[1]++, "Completed List", "simpleList", this)];    
+    this.optionsDisplayed = false;
     this.htmlFrag = `
-    <div id="${this.id}">
-      <div class="pageTitleCont">
-      <h1>${this.title} - ${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</h1>      
-      <p>${this.lists[0].tasks.length} incomplete, ${this.lists[1].tasks.length} complete</p>
-      </div>      
+    <div id="${this.id}">    
+      <div class="pageTitleCont stretch">
+        <h1 class="pageTitle"><span class="pageName">${this.title}</span> - 
+          <span class="pageDate">${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</span>
+        </h1>      
+        <img class="pageEllipsis" src="img/ellipsis.svg" alt="task options">        
+      </div>  
+      <p class="pageUncompComp">${this.lists[0].tasks.length} incomplete, ${this.lists[1].tasks.length} complete</p>    
       ${this.lists.map(item => `${item.htmlFrag}`).join("")}
     </div>
     `;  
-    this.elements = [];
-  }    
+    this.elements = [new Element("elListEllipsis", `#${this.id} .pageEllipsis`, "click", this.displayOptions.bind(this))];
+  }
+  
+  displayOptions() {
+    if(!this.optionsDisplayed) {
+      this.optionsDisplayed = true;
+
+      document.querySelector(`#${this.id} .pageTitleCont`).insertAdjacentHTML("afterend", `
+      <div class="pageOptions">
+        <ul>
+          <li class="pageRename">Rename</li>
+          <li class="pageDelete">Delete</li>
+        </ul>
+      </div>
+      `);
+
+      document.querySelector(`#${this.id} .pageRename`).addEventListener("click", this.renamePage.bind(this));
+      document.querySelector(`#${this.id} .pageDelete`).addEventListener("click", this.deletePage.bind(this));
+      
+      let callback = function(event) {
+        if(!event.target.closest(`#${this.id} .pageOptions`) && !event.target.closest(`#${this.id} .pageEllipsis`)) {          
+          this.optionsDisplayed = false;
+          if(document.querySelector(`#${this.id} .pageOptions`)) {
+            document.querySelector(`#${this.id} .pageOptions`).remove();
+          }
+          window.removeEventListener("click", callback);
+        } 
+      }.bind(this);
+
+      window.addEventListener("click", callback);
+
+    } else {
+      this.optionsDisplayed = false;
+      document.querySelector(`#${this.id} .pageOptions`).remove();
+    }
+  }
+
+  renamePage() {
+    this.title = prompt("Please enter a new title")
+    
+    if(document.querySelector(".pageOptions")) {
+      document.querySelector(".pageOptions").remove();
+    }
+
+    document.querySelector(`#${this.id} .pageName`).innerHTML = this.title;   
+  }
+
+  deletePage() {
+    document.querySelector(`#${this.id}`).remove();
+    controller.pages = controller.pages.filter(page => page.id !== this.id);
+    // List placeholder code goes here   
+  }
 }
 
 class Controller {
   constructor() {  
     this.setDocHeight()  
-    this.pages = [new Page(pageIdCounter++, prompt("Please enter the pages title"))];
-    this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);
-    this.initComponent(this.pages[this.pages.length - 1]);
-    this.initComponent(this.pages[this.pages.length - 1].lists[0]);
+    this.pages = [];
+    //this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);
+    //this.initComponent(this.pages[this.pages.length - 1]);
+    //this.initComponent(this.pages[this.pages.length - 1].lists[0]);
 
     this.renderComponent("body", '<img id="pagePlus" src="img/plus.svg" alt="add page">');
     document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
-    console.log(document.querySelector("#pagePlus").style.top);
-    console.log(window.innerHeight);
     document.querySelector("#pagePlus").style.right += `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
-    //document.querySelector("#pagePlus").style.top += `${document.querySelector("body").scrollHeight - document.querySelector("#pagePlus").offsetHeight}px`;
     window.addEventListener("resize", () => {
       this.setDocHeight() 
-      console.log("resized!");
       document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
-      //document.querySelector("#pagePlus").style.top += `${document.querySelector("body").clientHeight - document.querySelector("#pagePlus").offsetHeight}px`;
     });
   }
 
@@ -251,8 +306,7 @@ class Controller {
     this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);    
     this.initComponent(this.pages[this.pages.length - 1]);
     this.initComponent(this.pages[this.pages.length - 1].lists[0]);
-    //document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
-    //document.querySelector("#pagePlus").style.top += `${document.querySelector("body").scrollHeight - document.querySelector("#pagePlus").offsetHeight}px`;
+    document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
   }  
 
   setDocHeight() {

@@ -36,6 +36,19 @@ ul {
 }
 
 /* Page Styling */
+main > div[id^=page] {
+    background-color: #fff;
+}
+
+.pageOptions {
+    position: absolute;
+    right: 13px;  
+    
+    margin-top: -12px;
+
+    background-color: #eee;  
+}
+
 #pagePlus {
     position: fixed;
     bottom: 0;
@@ -43,9 +56,17 @@ ul {
     height: 2em;
 }
 
+.pageEllipsis {
+    height: 1em;
+
+    align-self: center;
+
+    margin-left: auto;
+}
+
 /* List Styling */
 .listTitleCont {
-    padding: 5px;
+
 }
 
 .listPlus {
@@ -57,14 +78,10 @@ ul {
 }
 
 /* Task Styling */
-li[id^=task] {
-    padding: 5px 5px 5px 15px;
-
-    background-color:#fbfbfb;
+li[id^=task] {    
 }
 
 .taskTitle {
-    margin-left: 5px;
 }
 
 .taskEllipsis {
@@ -76,16 +93,11 @@ li[id^=task] {
 }
 
 .taskTag {
-    margin-top: -5px;
-    margin-left:28px;
 }
 
 .taskOptions {
     position: absolute;
-    right: 13px;
-
-    margin-top: 0;
-    padding: 5px 15px;
+    right: 13px;    
 
     background-color: #eee;  
 }
@@ -95,9 +107,4 @@ li[id^=task] {
         width: 100%;
         min-width: 250px;
     }
-  }
-
-
-
-
-
+}
