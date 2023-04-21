@@ -38,6 +38,35 @@ ul {
 #empty {
     background-color: #fff;
 }
+/* Modal Styling */
+#modal {
+    position: fixed;  
+    
+    width: 420px;
+    height: 100%;
+    
+    z-index: 1;
+
+    background-color: #0fd8ba;
+}
+
+#formContainer {
+    display: flex;
+    flex-direction: column;  
+    
+    padding: 16px;
+
+    background-color: #fff;
+}
+
+#closeModal {
+   display: block; 
+   align-self: flex-end;       
+}
+
+#formContainer form {
+    align-self: center;
+}
 
 /* Page Styling */
 main > div[id^=page] {
@@ -107,7 +136,7 @@ li[id^=task] {
 }
 
 @media only screen and (max-width: 420px) {
-    main {
+    main, #modal {
         width: 100%;
         min-width: 250px;
     }
