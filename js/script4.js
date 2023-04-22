@@ -16,7 +16,6 @@ class Element {
 class Task {
   constructor(id, title, tag, list) {
     this.idFlag = "task";
-    this.idNum = id;
     this.id = `${this.idFlag}${id}`;
     this.title = title;
     this.tag = tag;
@@ -107,29 +106,31 @@ class Task {
 
   deleteTask() {
     document.querySelector(`#${this.id}`).remove();
-    controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).tasks = 
-      controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).tasks.filter(task => task.id !== this.id);
-    if (controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).tasks.length === 0) {
-      controller.renderComponent(`#${controller.pages[this.list.idNum].lists.find(list => list.idFlag === this.list.idFlag).id} > ul`,
+    controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks = 
+      controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks.filter(task => task.id !== this.id);
+    if (controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks.length === 0) {
+      controller.renderComponent(`#${controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).id} > ul`,
                                   '<li class="taskEmpty">Empty list</li>');
     }
 
-    document.querySelector(`#${controller.pages[this.list.idNum].id} .pageUncompComp`).remove();
+    document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageUncompComp`).remove();
 
-    document.querySelector(`#${controller.pages[this.list.idNum].id} .pageTitleCont`).insertAdjacentHTML("afterend",
+    document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
                             `<p class="pageUncompComp">${this.list.page.lists[0].tasks.length} incomplete, ${this.list.page.lists[1].tasks.length} complete</p>`);
+
+    
   }
 
   moveTask(addFunctionality) {    
     this.deleteTask();
 
     if(this.list.idFlag === "complexList") {
-      this.list = controller.pages[this.list.idNum].lists[1];
-      controller.pages[this.list.idNum].lists[1].tasks.push(this);    
+      this.list = controller.pages.find(page => page.id === this.list.page.id).lists[1];
+      controller.pages.find(page => page.id === this.list.page.id).lists[1].tasks.push(this);    
     }
     else if(this.list.idFlag === "simpleList") {
-      this.list = controller.pages[this.list.idNum].lists[0];
-      controller.pages[this.list.idNum].lists[0].tasks.push(this);      
+      this.list = controller.pages.find(page => page.id === this.list.page.id).lists[0];
+      controller.pages.find(page => page.id === this.list.page.id).lists[0].tasks.push(this);      
     }
 
     this.list.addTask(addFunctionality);  
@@ -146,7 +147,6 @@ class Task {
 class List {
   constructor(id, title, idFlag, page) {
     this.idFlag = idFlag;
-    this.idNum = id;
     this.id = `${this.idFlag}${id}`;    
     this.title = title;
     this.page = page;
@@ -177,15 +177,15 @@ class List {
       this.tasks.push(new Task(taskIdCounter++, 
                       prompt("Please enter the tasks title"), 
                       prompt("Please enter the tasks tag"),
-                      controller.pages[this.idNum].lists[0]));
+                      controller.pages.find(page => page.id === this.page.id).lists[0]));
     }     
 
     controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
     controller.initComponent(this.tasks[this.tasks.length -1]); 
 
-    document.querySelector(`#${controller.pages[this.idNum].id} .pageUncompComp`).remove();
+    document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
 
-    document.querySelector(`#${controller.pages[this.idNum].id} .pageTitleCont`).insertAdjacentHTML("afterend",
+    document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
                             `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
   }  
 }
@@ -193,7 +193,6 @@ class List {
 class Page {
   constructor(id, title, controller) {
     this.idFlag = "page";
-    this.idNum = id; 
     this.id = `${this.idFlag}${id}`;
     this.title = title;
     this.controller = controller;
@@ -261,7 +260,7 @@ class Page {
   }
 
   deletePage() {
-    document.querySelector(`#${this.id}`).remove();
+    document.querySelector(`#${this.id}`).remove();    
     controller.pages = controller.pages.filter(page => page.id !== this.id);
     if(controller.pages.length === 0) {  
       document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
@@ -320,7 +319,7 @@ class Controller {
         document.querySelector("#empty").remove();
       }
       this.setDocHeight()  
-      this.pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value));    
+      this.pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));    
       this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);    
       this.initComponent(this.pages[this.pages.length - 1]);
       this.initComponent(this.pages[this.pages.length - 1].lists[0]);
