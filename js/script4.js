@@ -80,11 +80,11 @@ class Task {
           <form id="editTask">
             <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags" required>
-              <option value="everyday" ${this.tag === "everyday" ? "selected" : ""}>Everyday</option>
-              <option value="leisure" ${this.tag === "leisure" ? "selected" : ""}>Leisure</option>
-              <option value="education" ${this.tag === "education" ? "selected" : ""}>Education</option>
-              <option value="work" ${this.tag === "work" ? "selected" : ""}>Work</option>               
-              <option value="shopping" ${this.tag === "shopping" ? "selected" : ""}>Shopping</option>
+              <option value="Everyday" ${this.tag === "everyday" ? "selected" : ""}>Everyday</option>
+              <option value="Leisure" ${this.tag === "leisure" ? "selected" : ""}>Leisure</option>
+              <option value="Education" ${this.tag === "education" ? "selected" : ""}>Education</option>
+              <option value="Work" ${this.tag === "work" ? "selected" : ""}>Work</option>               
+              <option value="Shopping" ${this.tag === "shopping" ? "selected" : ""}>Shopping</option>
             </select>
             <input type="submit" value="Edit Task">
           </form>
@@ -207,11 +207,11 @@ class List {
             <input type="text" name="title" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags" required>
               <option value="" selected disabled hidden>Select a Tag</option>
-              <option value="everyday">Everyday</option>
-              <option value="leisure">Leisure</option>
-              <option value="education">Education</option>
-              <option value="work">Work</option>               
-              <option value="shopping">Shopping</option>
+              <option value="Everyday">Everyday</option>
+              <option value="Leisure">Leisure</option>
+              <option value="Education">Education</option>
+              <option value="Eork">Work</option>               
+              <option value="Shopping">Shopping</option>
             </select>
             <input type="submit" value="Add Task">
           </form>
