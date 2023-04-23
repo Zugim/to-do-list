@@ -34,7 +34,7 @@ class Task {
     </li>
     `;
     this.elements = [new Element("elTask", `#${this.id}`),
-                     new Element("eltaskCheckbox", `#${this.id} .taskCheckbox`, "change", function() {this.moveTask("move")}.bind(this)),
+                     new Element("eltaskCheckbox", `#${this.id} .taskCheckbox`, "change", () => this.moveTask("move")),
                      new Element("elTaskEllipsis", `#${this.id} .taskEllipsis`, "click", this.displayOptions.bind(this))];
   }
 
@@ -45,16 +45,16 @@ class Task {
       document.querySelector(`#${this.id} .taskContainerTop`).insertAdjacentHTML("afterend", `
       <div class="taskOptions">
         <ul>
-          <li class="taskRename">Rename</li>
+          <li class="taskEdit">Edit</li>
           <li class="taskDelete">Delete</li>
         </ul>
       </div>
       `);
 
-      document.querySelector(`#${this.id} .taskRename`).addEventListener("click", this.renameTask.bind(this));
+      document.querySelector(`#${this.id} .taskEdit`).addEventListener("click", this.editTask.bind(this));
       document.querySelector(`#${this.id} .taskDelete`).addEventListener("click", this.deleteTask.bind(this));
       
-      let callback = function(event) {
+      let callback = event => {
         if(!event.target.closest(`#${this.id} .taskOptions`) && !event.target.closest(`#${this.id} .taskEllipsis`)) {          
           this.optionsDisplayed = false;
           if(document.querySelector(`#${this.id} .taskOptions`)) {
@@ -62,7 +62,7 @@ class Task {
           }
           window.removeEventListener("click", callback);
         } 
-      }.bind(this);
+      }
 
       window.addEventListener("click", callback);
 
@@ -72,36 +72,64 @@ class Task {
     }
   }
 
-  renameTask() {
-    this.title = prompt("Please enter a new title")
-    this.htmlFrag = `
-    <li id="${this.id}">
-      <div class="taskContainerTop stretch">
-        <input class="taskCheckbox" type="checkbox" name="complete"/>
-        <span class="taskTitle">${this.title}</span>
-        <img class="taskEllipsis" src="img/ellipsis.svg" alt="task options">
-      </div>      
-      <div class="taskContainerBottom stretch">
-        <span class="taskTag">${this.tag}</span>
+  editTask() {
+    document.querySelector("main").insertAdjacentHTML("afterbegin", `
+      <div id="modal">
+        <div id="formContainer">
+          <button id="closeModal">X</button>
+          <form id="editTask">
+            <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
+            <select id="tags" name="tags" required>
+              <option value="everyday" ${this.tag === "everyday" ? "selected" : ""}>Everyday</option>
+              <option value="leisure" ${this.tag === "leisure" ? "selected" : ""}>Leisure</option>
+              <option value="education" ${this.tag === "education" ? "selected" : ""}>Education</option>
+              <option value="work" ${this.tag === "work" ? "selected" : ""}>Work</option>               
+              <option value="shopping" ${this.tag === "shopping" ? "selected" : ""}>Shopping</option>
+            </select>
+            <input type="submit" value="Edit Task">
+          </form>
+        </div>
       </div>
-    </li>
-    `;
-    if(document.querySelector(".taskOptions")) {
-      document.querySelector(".taskOptions").remove();
-    }
-    
-    this.list.tasks.forEach(task => document.querySelector(`#${task.id}`).remove());
-    this.list.tasks.forEach(task => {
-      controller.renderComponent(`#${task.list.id} .listList`, task.htmlFrag);
-      controller.initComponent(task);     
-    });
+    `);
 
-    if(this.list.idFlag === "complexList") {
-      this.elements.find(element => element.name === "eltaskCheckbox").el.checked = false;    
-    }
-    else if(this.list.idFlag === "simpleList") {
-      this.elements.find(element => element.name === "eltaskCheckbox").el.checked = true;      
-    }
+    document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
+
+    document.querySelector("#editTask").addEventListener("submit", (el) => {
+      el.preventDefault();
+
+      this.title = document.querySelector("#editTask").elements["title"].value;
+      this.tag = document.querySelector("#editTask").elements["tags"].value;
+      this.htmlFrag = `
+      <li id="${this.id}">
+        <div class="taskContainerTop stretch">
+          <input class="taskCheckbox" type="checkbox" name="complete"/>
+          <span class="taskTitle">${this.title}</span>
+          <img class="taskEllipsis" src="img/ellipsis.svg" alt="task options">
+        </div>      
+        <div class="taskContainerBottom stretch">
+          <span class="taskTag">${this.tag}</span>
+        </div>
+      </li>
+      `;
+      if(document.querySelector(".taskOptions")) {
+        document.querySelector(".taskOptions").remove();
+      }
+      
+      this.list.tasks.forEach(task => document.querySelector(`#${task.id}`).remove());
+      this.list.tasks.forEach(task => {
+        controller.renderComponent(`#${task.list.id} .listList`, task.htmlFrag);
+        controller.initComponent(task);     
+      });
+  
+      if(this.list.idFlag === "complexList") {
+        this.list.tasks.forEach(task => task.elements.find(element => element.name === "eltaskCheckbox").el.checked = false);    
+      }
+      else if(this.list.idFlag === "simpleList") {
+        this.list.tasks.forEach(task => task.elements.find(element => element.name === "eltaskCheckbox").el.checked = true);     
+      }
+           
+      document.querySelector("#modal").remove();      
+    });     
   }
 
   deleteTask() {
@@ -116,9 +144,7 @@ class Task {
     document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageUncompComp`).remove();
 
     document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
-                            `<p class="pageUncompComp">${this.list.page.lists[0].tasks.length} incomplete, ${this.list.page.lists[1].tasks.length} complete</p>`);
-
-    
+                            `<p class="pageUncompComp">${this.list.page.lists[0].tasks.length} incomplete, ${this.list.page.lists[1].tasks.length} complete</p>`);    
   }
 
   moveTask(addFunctionality) {    
@@ -164,29 +190,63 @@ class List {
       </ul>
     </div>
     `;
-    // Using bind(this) so addTask refers to the correct this - Need to research
-    this.elements = [new Element("elAddNewTaskButton", `#${this.id} .listPlus`, "click", function() {this.addTask("new")}.bind(this))];
+    this.elements = [new Element("elAddNewTaskButton", `#${this.id} .listPlus`, "click", () => this.addTask("new"))];
   }  
-
-  addTask(addFunctionality) {    
+  
+  addTask(addFunctionality) {
     if (document.querySelector(`#${this.id} .taskEmpty`)) {
       document.querySelector(`#${this.id} .taskEmpty`).remove();
     }
-    
+
     if(addFunctionality === "new") {
-      this.tasks.push(new Task(taskIdCounter++, 
-                      prompt("Please enter the tasks title"), 
-                      prompt("Please enter the tasks tag"),
-                      controller.pages.find(page => page.id === this.page.id).lists[0]));
-    }     
+      document.querySelector("main").insertAdjacentHTML("afterbegin", `
+      <div id="modal">
+        <div id="formContainer">
+          <button id="closeModal">X</button>
+          <form id="addTask">
+            <input type="text" name="title" required pattern=".*\\S+.*"></input>
+            <select id="tags" name="tags" required>
+              <option value="" selected disabled hidden>Select a Tag</option>
+              <option value="everyday">Everyday</option>
+              <option value="leisure">Leisure</option>
+              <option value="education">Education</option>
+              <option value="work">Work</option>               
+              <option value="shopping">Shopping</option>
+            </select>
+            <input type="submit" value="Add Task">
+          </form>
+        </div>
+      </div>
+      `);
 
-    controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
-    controller.initComponent(this.tasks[this.tasks.length -1]); 
+      document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
 
-    document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
+      document.querySelector("#addTask").addEventListener("submit", (el) => {
+        el.preventDefault();
+        this.tasks.push(new Task(taskIdCounter++, 
+          document.querySelector("#addTask").elements["title"].value,  
+          document.querySelector("#addTask").elements["tags"].value,
+          controller.pages.find(page => page.id === this.page.id).lists[0]));
+
+        controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
+        controller.initComponent(this.tasks[this.tasks.length -1]);
+
+        document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
+
+        document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
+                               `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
+
+        document.querySelector("#modal").remove();        
+      });     
+    } else {
+      controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
+      controller.initComponent(this.tasks[this.tasks.length -1]); 
+
+      document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
 
     document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
-                            `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
+                           `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
+    }     
   }  
 }
 
@@ -222,16 +282,16 @@ class Page {
       document.querySelector(`#${this.id} .pageTitleCont`).insertAdjacentHTML("afterend", `
       <div class="pageOptions">
         <ul>
-          <li class="pageRename">Rename</li>
+          <li class="pageEdit">Edit</li>
           <li class="pageDelete">Delete</li>
         </ul>
       </div>
       `);
 
-      document.querySelector(`#${this.id} .pageRename`).addEventListener("click", this.renamePage.bind(this));
+      document.querySelector(`#${this.id} .pageEdit`).addEventListener("click", this.editPage.bind(this));
       document.querySelector(`#${this.id} .pageDelete`).addEventListener("click", this.deletePage.bind(this));
       
-      let callback = function(event) {
+      let callback = event => {
         if(!event.target.closest(`#${this.id} .pageOptions`) && !event.target.closest(`#${this.id} .pageEllipsis`)) {          
           this.optionsDisplayed = false;
           if(document.querySelector(`#${this.id} .pageOptions`)) {
@@ -239,7 +299,7 @@ class Page {
           }
           window.removeEventListener("click", callback);
         } 
-      }.bind(this);
+      };
 
       window.addEventListener("click", callback);
 
@@ -249,14 +309,31 @@ class Page {
     }
   }
 
-  renamePage() {
-    this.title = prompt("Please enter a new title")
-    
-    if(document.querySelector(".pageOptions")) {
-      document.querySelector(".pageOptions").remove();
-    }
+  editPage() {
+    document.querySelector("main").insertAdjacentHTML("afterbegin", `
+      <div id="modal">
+        <div id="formContainer">
+          <button id="closeModal">X</button>
+          <form id="editPage">
+            <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
+            <input type="submit" value="Edit Page">
+          </form>
+        </div>
+      </div>
+    `);
 
-    document.querySelector(`#${this.id} .pageName`).innerHTML = this.title;   
+    document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
+
+
+    document.querySelector("#editPage").addEventListener("submit", (el) => {
+      el.preventDefault();
+      this.title = document.querySelector("#editPage").elements["title"].value;  
+      if(document.querySelector(".pageOptions")) {
+        document.querySelector(".pageOptions").remove();
+      }
+      document.querySelector(`#${this.id} .pageName`).innerHTML = this.title;      
+      document.querySelector("#modal").remove();      
+    });     
   }
 
   deletePage() {
@@ -309,7 +386,7 @@ class Controller {
           </form>
         </div>
       </div>
-    `)   
+    `);   
     
     document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
     
