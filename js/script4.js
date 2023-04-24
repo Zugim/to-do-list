@@ -210,7 +210,7 @@ class List {
               <option value="Everyday">Everyday</option>
               <option value="Leisure">Leisure</option>
               <option value="Education">Education</option>
-              <option value="Eork">Work</option>               
+              <option value="Work">Work</option>               
               <option value="Shopping">Shopping</option>
             </select>
             <input type="submit" value="Add Task">
@@ -350,7 +350,7 @@ class Controller {
     this.setDocHeight()  
     this.pages = [];   
     document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
-    this.renderComponent("body", '<img id="pagePlus" src="img/plus.svg" alt="add page">');
+    this.renderComponent("body", '<button id="pagePlus"><img src="img/plus.svg" alt="add page"></button>');
     document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
     document.querySelector("#pagePlus").style.right += `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
     window.addEventListener("resize", () => {
@@ -379,10 +379,14 @@ class Controller {
     document.querySelector("main").insertAdjacentHTML("afterbegin", `
       <div id="modal">
         <div id="formContainer">
-          <button id="closeModal">X</button>
+          <div id="formTitleContainer">
+            <div id="leftPad"></div>
+            <h1>Add New List</h1>
+            <button id="closeModal">X</button>
+          </div>
           <form id="addPage">
-            <input type="text" name="title" required pattern=".*\\S+.*"></input>
-            <input type="submit" value="Add Page">
+            <input type="text" name="title" placeholder="List Title" required pattern=".*\\S+.*"></input>
+            <input type="submit" value="Submit">
           </form>
         </div>
       </div>

@@ -2,7 +2,7 @@ p, li {
     font-family: 'Merriweather', serif;
 }
 
-h1, h2, h3, button {
+h1, h2, h3, button, input {
     font-family: 'Karla', sans-serif;
 }
 
@@ -16,9 +16,10 @@ body {
 main {
     position: relative;
 
-
     width: 420px;
     min-height: 100%;
+
+    padding: 40px 10px 10px 10px;
 
     box-shadow: 5px 0px 0px 0px rgba(0,0,0,0.15);
 
@@ -36,14 +37,24 @@ ul {
 }
 
 #empty {
+    padding: 10px;
+
+    border-radius: 10px;
+
     background-color: #fff;
 }
+
 /* Modal Styling */
 #modal {
     position: fixed;  
     
     width: 420px;
     height: 100%;
+
+    margin-top: -40px;
+    margin-left: -10px;
+
+    padding: 40px 10px;
     
     z-index: 1;
 
@@ -52,25 +63,110 @@ ul {
 
 #formContainer {
     display: flex;
-    flex-direction: column;  
-    
-    padding: 16px;
+    flex-direction: column;     
+
+    padding: 10px;
+
+    border-radius: 10px;
 
     background-color: #fff;
 }
 
+#formTitleContainer {
+    display: flex;
+    justify-content: center;
+}
+
+#leftPad {
+    width: 2em;
+
+    margin-right: auto;
+
+    visibility: hidden;
+}
+
+#formTitleContainer h1 {
+}
+
 #closeModal {
-   display: block; 
-   align-self: flex-end;       
+    width: 2em;
+    height: 2em;
+
+    margin-left: auto;
+   
+    border: none;
+    border-radius: 25px;
+
+    background-color: #f9ea85;
+
+    font-weight: bold;
+
+    cursor: pointer;
 }
 
 #formContainer form {
-    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#formContainer input { 
+    display: block;
+
+    height: 2.5em;
+
+    margin-top: 5px;
+
+    border: none;
+    border-radius: 2px;    
+}
+
+#formContainer input[type=text] {
+    width: 80%;
+
+    padding: 0 5px;
+
+    background-color: #eee;
+
+    font-weight: bold;
+}
+
+#formContainer input[type=submit] {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 10px 20px;
+
+    border-radius: 5px;
+
+    background-color: #f9ea85;    
+    
+    font-size: 18px;
+    font-weight: bold;
+    font-style: italic;
+
+    cursor: pointer;
 }
 
 /* Page Styling */
 main > div[id^=page] {
+    padding: 10px;
+
+    border-radius: 10px;
+
     background-color: #fff;
+}
+
+.pageTitleCont {
+    
+}
+
+.pageName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100px;
+    background-color: red;
 }
 
 .pageOptions {
@@ -85,8 +181,23 @@ main > div[id^=page] {
 #pagePlus {
     position: fixed;
     bottom: 0;
+    
+    width: 2.5em;
+    height: 2.5em;
 
-    height: 2em;
+    margin: 5px;
+    padding: 5px;
+    
+    border: none;
+    border-radius: 25px;
+
+    background-color: #0fd8ba;
+
+    cursor: pointer;
+}
+
+#pagePlus img {
+
 }
 
 .pageEllipsis {
