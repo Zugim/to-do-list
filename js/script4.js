@@ -42,7 +42,7 @@ class Task {
     if(!this.optionsDisplayed) {
       this.optionsDisplayed = true;
 
-      document.querySelector(`#${this.id} .taskContainerTop`).insertAdjacentHTML("afterend", `
+      document.querySelector(`#${this.id} .taskEllipsis`).insertAdjacentHTML("afterend", `
       <div class="taskOptions">
         <ul>
           <li class="taskEdit">Edit</li>
@@ -143,7 +143,7 @@ class Task {
 
     document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageUncompComp`).remove();
 
-    document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
+    document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                             `<p class="pageUncompComp">${this.list.page.lists[0].tasks.length} incomplete, ${this.list.page.lists[1].tasks.length} complete</p>`);    
   }
 
@@ -181,7 +181,7 @@ class List {
     <div id="${this.id}">
       <div class="listTitleCont stretch">
         <h2 class="listTitle">${this.title}</h2>
-        ${this.idFlag === "complexList" ? `<img class="listPlus" src="img/plus.svg" alt="add task">` : ``}
+        ${this.idFlag === "complexList" ? `<img class="listPlus" src="img/plusblk.svg" alt="add task">` : ``}
       </div>
       <ul class="listList"> 
         ${this.tasks.length === 0 ? 
@@ -204,7 +204,7 @@ class List {
         <div id="formContainer">
           <button id="closeModal">X</button>
           <form id="addTask">
-            <input type="text" name="title" required pattern=".*\\S+.*"></input>
+            <input type="text" name="title" placeholder="List Title" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags" required>
               <option value="" selected disabled hidden>Select a Tag</option>
               <option value="Everyday">Everyday</option>
@@ -233,7 +233,7 @@ class List {
 
         document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
 
-        document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
+        document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                                `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
 
         document.querySelector("#modal").remove();        
@@ -244,8 +244,8 @@ class List {
 
       document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
 
-    document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageTitleCont`).insertAdjacentHTML("afterend",
-                           `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
+      document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
+                            `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
     }     
   }  
 }
@@ -261,13 +261,12 @@ class Page {
                   new List(listIdCounters[1]++, "Completed List", "simpleList", this)];    
     this.optionsDisplayed = false;
     this.htmlFrag = `
-    <div id="${this.id}">    
-      <div class="pageTitleCont stretch">
-        <h1 class="pageTitle"><span class="pageName">${this.title}</span> - 
-          <span class="pageDate">${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</span>
-        </h1>      
-        <img class="pageEllipsis" src="img/ellipsis.svg" alt="task options">        
-      </div>  
+    <div id="${this.id}"> 
+      <div class="pageTitleCont">             
+        <h1 class="pageTitle" title="${this.title}">${this.title}</h1> 
+        <img class="pageEllipsis" src="img/ellipsis.svg" alt="task options">
+      </div>
+      <h2 class="pageDate">${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</h2>       
       <p class="pageUncompComp">${this.lists[0].tasks.length} incomplete, ${this.lists[1].tasks.length} complete</p>    
       ${this.lists.map(item => `${item.htmlFrag}`).join("")}
     </div>
@@ -279,7 +278,7 @@ class Page {
     if(!this.optionsDisplayed) {
       this.optionsDisplayed = true;
 
-      document.querySelector(`#${this.id} .pageTitleCont`).insertAdjacentHTML("afterend", `
+      document.querySelector(`#${this.id} .pageEllipsis`).insertAdjacentHTML("afterend", `
       <div class="pageOptions">
         <ul>
           <li class="pageEdit">Edit</li>
@@ -331,7 +330,7 @@ class Page {
       if(document.querySelector(".pageOptions")) {
         document.querySelector(".pageOptions").remove();
       }
-      document.querySelector(`#${this.id} .pageName`).innerHTML = this.title;      
+      document.querySelector(`#${this.id} .pageTitle`).innerHTML = this.title;      
       document.querySelector("#modal").remove();      
     });     
   }
@@ -339,6 +338,7 @@ class Page {
   deletePage() {
     document.querySelector(`#${this.id}`).remove();    
     controller.pages = controller.pages.filter(page => page.id !== this.id);
+    document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
     if(controller.pages.length === 0) {  
       document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
     }

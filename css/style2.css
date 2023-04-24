@@ -2,12 +2,12 @@ p, li {
     font-family: 'Merriweather', serif;
 }
 
-h1, h2, h3, button, input {
+h1, h2, h3, button, input, select {
     font-family: 'Karla', sans-serif;
 }
 
 body {
-    font-size: 16px;
+    font-size: 17px;
     color: #222;
 
     background-color:#fbfbfb;
@@ -19,7 +19,7 @@ main {
     width: 420px;
     min-height: 100%;
 
-    padding: 40px 10px 10px 10px;
+    padding: 40px 10px 50px 10px;
 
     box-shadow: 5px 0px 0px 0px rgba(0,0,0,0.15);
 
@@ -110,29 +110,28 @@ ul {
     align-items: center;
 }
 
-#formContainer input { 
-    display: block;
-
+#formContainer input, select { 
     height: 2.5em;
 
     margin-top: 5px;
 
-    border: none;
-    border-radius: 2px;    
+    border: none;      
+    
+    font-weight: bold;
 }
 
-#formContainer input[type=text] {
+#formContainer input[type=text], select {
     width: 80%;
 
     padding: 0 5px;
 
-    background-color: #eee;
+    border-radius: 2px;
 
-    font-weight: bold;
+    background-color: #eee;    
 }
 
 #formContainer input[type=submit] {
-    display: inline-flex;
+    display: flex;
     align-items: center;
 
     padding: 10px 20px;
@@ -142,40 +141,82 @@ ul {
     background-color: #f9ea85;    
     
     font-size: 18px;
-    font-weight: bold;
     font-style: italic;
 
     cursor: pointer;
 }
 
+select {
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: menulist;
+    
+    padding: 0;
+}
+
 /* Page Styling */
 main > div[id^=page] {
+    margin-top: 30px;
+
     padding: 10px;
 
-    border-radius: 10px;
+    border-radius: 10px;   
 
     background-color: #fff;
 }
 
-.pageTitleCont {
-    
+main > div[id^=page]:first-child {
+    margin-top: 0;
 }
 
-.pageName {
+.pageTitleCont {
+    display: flex;
+}
+
+.pageTitle {
+    display: block;
+    width: 90%; 
+    
     white-space: nowrap;
+
     overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100px;
-    background-color: red;
+    
+    text-overflow: ellipsis;    
+}
+
+.pageEllipsis {
+    height: 1em;
+
+    align-self: center;
+
+    margin-left: auto;
+
+    cursor: pointer;
+}
+
+.pageDate {
+    margin-top: -8px;
+
+    font-size: 19px;
+    font-weight: 500;
+    font-style: italic;
 }
 
 .pageOptions {
     position: absolute;
-    right: 13px;  
-    
-    margin-top: -12px;
+    right: 28.5px; 
 
-    background-color: #eee;  
+    margin-top: 39px;
+    
+    padding: 5px 10px;
+
+    border-radius: 2px;
+
+    background-color: #eee; 
+}
+
+.pageOptions li {
+    cursor: pointer;
 }
 
 #pagePlus {
@@ -200,14 +241,6 @@ main > div[id^=page] {
 
 }
 
-.pageEllipsis {
-    height: 1em;
-
-    align-self: center;
-
-    margin-left: auto;
-}
-
 /* List Styling */
 .listTitleCont {
 
@@ -219,13 +252,38 @@ main > div[id^=page] {
     align-self: center;
 
     margin-left: auto;
+
+    cursor: pointer;
 }
 
 /* Task Styling */
 li[id^=task] {    
 }
 
+.taskEmpty {
+    padding-left: 5px;
+}
+
+.taskCheckbox {
+    margin: 0 5px;
+}
+
 .taskTitle {
+}
+
+.taskTag {
+    margin: 2px 0 0 23px;
+    padding: 2px 10px;
+
+    border-radius: 15px;
+
+    background-color: #0fd8ba;
+
+    font-size: 12px;
+    font-weight: bold;  
+    font-family: 'Karla', sans-serif;
+
+    opacity: 70%;
 }
 
 .taskEllipsis {
@@ -233,22 +291,40 @@ li[id^=task] {
 
     align-self: center;
 
-    margin-left: auto;
+    margin-left: auto; 
+    cursor: pointer;
 }
 
-.taskTag {
+div[id^=simpleList] .taskTitle { 
+    opacity: 30%;
+}
+
+div[id^=simpleList] .taskTag {
+    display: none;
+}
+
+div[id^=simpleList] .taskEllipsis {
+    display: none;
 }
 
 .taskOptions {
     position: absolute;
-    right: 13px;    
+    right: 28.5px; 
+
+    margin-top: 26.25px;
+    
+    padding: 5px 10px;
 
     background-color: #eee;  
+}
+
+.taskOptions li {
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 420px) {
     main, #modal {
         width: 100%;
-        min-width: 250px;
+        min-width: 350px;
     }
 }
