@@ -3,7 +3,31 @@ let pageIdCounter = 0;
 let listIdCounters = [0, 0];
 let taskIdCounter = 0;
 
-let pages = [];
+class Test {
+  constructor(id, title, controller) {
+    this.idFlag = "page";
+    this.id = `${this.idFlag}${id}`;
+    this.title = title;
+    this.controller = controller;
+    this.date = new Date();  
+    //this.lists = [new List(listIdCounters[0]++, "To Do List", "complexList", this)];  
+    // this.lists = [new List(listIdCounters[0]++, "To Do List", "complexList", this),
+    //               new List(listIdCounters[1]++, "Completed List", "simpleList", this)];    
+    // this.optionsDisplayed = false;
+    // this.htmlFrag = `
+    // <div id="${this.id}"> 
+    //   <div class="pageTitleCont">             
+    //     <h1 class="pageTitle" title="${this.title}">${this.title}</h1> 
+    //     <img class="pageEllipsis" src="img/ellipsis.svg" alt="task options">
+    //   </div>
+    //   <h2 class="pageDate">${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</h2>       
+    //   <p class="pageUncompComp">${this.lists[0].tasks.length} incomplete, ${this.lists[1].tasks.length} complete</p>    
+    //   ${this.lists.map(item => `${item.htmlFrag}`).join("")}
+    // </div>
+    // `;  
+    //this.elements = [new Element("elListEllipsis", `#${this.id} .pageEllipsis`, "click", this.displayOptions.bind(this))];
+  } 
+}
 
 class Element {
   constructor(name, selector, event = null, callBack = null, el = null) {
@@ -143,16 +167,16 @@ class Task {
 
   deleteTask() {
     document.querySelector(`#${this.id}`).remove();
-    controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks = 
-      controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks.filter(task => task.id !== this.id);
-    if (controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks.length === 0) {
-      controller.renderComponent(`#${controller.pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).id} > ul`,
+    pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks = 
+      pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks.filter(task => task.id !== this.id);
+    if (pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).tasks.length === 0) {
+      controller.renderComponent(`#${pages.find(page => page.id === this.list.page.id).lists.find(list => list.idFlag === this.list.idFlag).id} > ul`,
                                   '<li class="taskEmpty">Empty list</li>');
     }
 
-    document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageUncompComp`).remove();
+    document.querySelector(`#${pages.find(page => page.id === this.list.page.id).id} .pageUncompComp`).remove();
 
-    document.querySelector(`#${controller.pages.find(page => page.id === this.list.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
+    document.querySelector(`#${pages.find(page => page.id === this.list.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                             `<p class="pageUncompComp">${this.list.page.lists[0].tasks.length} incomplete, ${this.list.page.lists[1].tasks.length} complete</p>`);    
   }
 
@@ -160,12 +184,12 @@ class Task {
     this.deleteTask();
 
     if(this.list.idFlag === "complexList") {
-      this.list = controller.pages.find(page => page.id === this.list.page.id).lists[1];
-      controller.pages.find(page => page.id === this.list.page.id).lists[1].tasks.push(this);    
+      this.list = pages.find(page => page.id === this.list.page.id).lists[1];
+      pages.find(page => page.id === this.list.page.id).lists[1].tasks.push(this);    
     }
     else if(this.list.idFlag === "simpleList") {
-      this.list = controller.pages.find(page => page.id === this.list.page.id).lists[0];
-      controller.pages.find(page => page.id === this.list.page.id).lists[0].tasks.push(this);      
+      this.list = pages.find(page => page.id === this.list.page.id).lists[0];
+      pages.find(page => page.id === this.list.page.id).lists[0].tasks.push(this);      
     }
 
     this.list.addTask(addFunctionality);  
@@ -241,14 +265,14 @@ class List {
         this.tasks.push(new Task(taskIdCounter++, 
           document.querySelector("#addTask").elements["title"].value,  
           document.querySelector("#addTask").elements["tags"].value,
-          controller.pages.find(page => page.id === this.page.id).lists[0]));
+          pages.find(page => page.id === this.page.id).lists[0]));
 
         controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
         controller.initComponent(this.tasks[this.tasks.length -1]);
 
-        document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
+        document.querySelector(`#${pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
 
-        document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
+        document.querySelector(`#${pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                                `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
 
         document.querySelector("#modal").remove();        
@@ -257,9 +281,9 @@ class List {
       controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
       controller.initComponent(this.tasks[this.tasks.length -1]); 
 
-      document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
+      document.querySelector(`#${pages.find(page => page.id === this.page.id).id} .pageUncompComp`).remove();
 
-      document.querySelector(`#${controller.pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
+      document.querySelector(`#${pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                             `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
     }     
   }  
@@ -358,9 +382,9 @@ class Page {
 
   deletePage() {
     document.querySelector(`#${this.id}`).remove();    
-    controller.pages = controller.pages.filter(page => page.id !== this.id);
+    pages = pages.filter(page => page.id !== this.id);
     document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
-    if(controller.pages.length === 0) {  
+    if(pages.length === 0) {  
       document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
     }
   }
@@ -368,9 +392,7 @@ class Page {
 
 class Controller {
   constructor() {  
-    this.setDocHeight()     
-    this.pages = [];       
-    document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
+    this.setDocHeight()       
     this.renderComponent("body", '<button id="pagePlus"><img src="img/plus.svg" alt="add page"></button>');
     document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
     document.querySelector("#pagePlus").style.right += `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
@@ -432,10 +454,16 @@ class Controller {
         document.querySelector("#empty").remove();
       }
       this.setDocHeight()  
-      this.pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));  
-      this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);    
-      this.initComponent(this.pages[this.pages.length - 1]);
-      this.initComponent(this.pages[this.pages.length - 1].lists[0]);
+      pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));       
+      
+      // Local Storage Stuff   
+      window.localStorage.setItem("local", JSON.stringify(toLocal()));
+      local = JSON.parse(window.localStorage.getItem("local"));
+      console.log(local);     
+
+      this.renderComponent("main", pages[pages.length - 1].htmlFrag);    
+      this.initComponent(pages[pages.length - 1]);
+      this.initComponent(pages[pages.length - 1].lists[0]);
       document.querySelector("#modal").remove();
       document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
     });    
@@ -448,3 +476,59 @@ class Controller {
 }
 
 let controller = new Controller();
+let pages = [];
+let local = JSON.parse(window.localStorage.getItem("local"));
+
+if(window.localStorage.getItem("local")) {
+  console.log("STORAGE"); 
+
+  (local.forEach(page => {      
+    console.log("from page"); 
+    console.log(page.id + " " + page.title);
+
+    page.lists.forEach(list => { 
+      console.log("from list");      
+
+      list.tasks.forEach(task => {
+        console.log("from task"); 
+
+      })      
+    })
+  })); 
+
+  // pages.push(new Page(pageIdCounter++, "FROM STORAGE", controller));
+  // controller.renderComponent("main", pages[pages.length - 1].htmlFrag);    
+  // controller.initComponent(pages[pages.length - 1]);
+  // controller.initComponent(pages[pages.length - 1].lists[0]);
+} else {
+  console.log("NEW"); 
+
+  document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
+}
+
+let toLocal = () => { 
+  let local = [];
+
+  (pages.forEach(page => {  
+    let tmp;
+    console.log("from page");
+    tmp = {id: page.id, title: page.title, lists: []};    
+
+    page.lists.forEach(list => { 
+      console.log("from list");
+      tmp.lists.push({id: list.id, title: list.title, idFlag: list.idFlag, tasks: []})
+
+      list.tasks.forEach(task => {
+        console.log("from task");
+        if(task.list.idFlag === "complexList") {
+          tmp.lists[0].tasks.push({id: task.id, title: task.title, tag: task.tag});
+        } else {
+          tmp.lists[1].tasks.push({id: task.id, title: task.title, tag: task.tag});
+        }        
+      })      
+    })
+    local.push(tmp);
+  })); 
+
+  return local;
+} 
