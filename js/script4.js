@@ -357,6 +357,10 @@ class Controller {
       this.setDocHeight()       
       document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
     });
+    window.addEventListener("touchmove", () => {
+      this.setDocHeight()       
+      document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    });
   }
 
   renderComponent(location, htmlFrag) {    
