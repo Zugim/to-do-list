@@ -1,7 +1,9 @@
-pageIdCounter = 0;
+let pageIdCounter = 0;
 // First element for complexLists, second element for simpleLists
-listIdCounters = [0, 0];
-taskIdCounter = 0;
+let listIdCounters = [0, 0];
+let taskIdCounter = 0;
+
+let pages = [];
 
 class Element {
   constructor(name, selector, event = null, callBack = null, el = null) {
@@ -76,7 +78,11 @@ class Task {
     document.querySelector("main").insertAdjacentHTML("afterbegin", `
       <div id="modal">
         <div id="formContainer">
-          <button id="closeModal">X</button>
+          <div id="formTitleContainer">
+            <div id="leftPad"></div>
+            <h1>Edit Task</h1>
+            <button id="closeModal">X</button>
+          </div>
           <form id="editTask">
             <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags">
@@ -205,7 +211,11 @@ class List {
       document.querySelector("main").insertAdjacentHTML("afterbegin", `
       <div id="modal">
         <div id="formContainer">
-          <button id="closeModal">X</button>
+          <div id="formTitleContainer">
+            <div id="leftPad"></div>
+            <h1>Add New Task</h1>
+            <button id="closeModal">X</button>
+          </div>
           <form id="addTask">
             <input type="text" name="title" placeholder="List Title" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags">
@@ -317,7 +327,11 @@ class Page {
     document.querySelector("main").insertAdjacentHTML("afterbegin", `
       <div id="modal">
         <div id="formContainer">
-          <button id="closeModal">X</button>
+          <div id="formTitleContainer">
+            <div id="leftPad"></div>
+            <h1>Edit List</h1>
+            <button id="closeModal">X</button>
+          </div>
           <form id="editPage">
             <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
             <input type="submit" value="Edit Page">
