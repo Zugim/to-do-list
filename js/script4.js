@@ -93,6 +93,9 @@ class Task {
     `);
 
     document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
+    document.querySelector("#modal").addEventListener("scroll", (el) => el.preventDefault());
+    document.querySelector("#modal").addEventListener("mousewheel", (el) => el.preventDefault());
+    document.querySelector("#modal").addEventListener("touchmove", (el) => el.preventDefault());
 
     document.querySelector("#editTask").addEventListener("submit", (el) => {
       el.preventDefault();
@@ -219,6 +222,9 @@ class List {
       `);
 
       document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
+      document.querySelector("#modal").addEventListener("scroll", (el) => el.preventDefault());
+      document.querySelector("#modal").addEventListener("mousewheel", (el) => el.preventDefault());
+      document.querySelector("#modal").addEventListener("touchmove", (el) => el.preventDefault());
 
       document.querySelector("#addTask").addEventListener("submit", (el) => {
         el.preventDefault();
@@ -321,7 +327,9 @@ class Page {
     `);
 
     document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
-
+    document.querySelector("#modal").addEventListener("scroll", (el) => el.preventDefault());
+    document.querySelector("#modal").addEventListener("mousewheel", (el) => el.preventDefault());
+    document.querySelector("#modal").addEventListener("touchmove", (el) => el.preventDefault());
 
     document.querySelector("#editPage").addEventListener("submit", (el) => {
       el.preventDefault();
@@ -357,6 +365,10 @@ class Controller {
       document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
     });
     window.addEventListener("touchmove", () => {
+      this.setDocHeight()       
+      document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    });
+    window.addEventListener("touch", () => {
       this.setDocHeight()       
       document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
     });
@@ -396,6 +408,9 @@ class Controller {
     `);   
     
     document.querySelector("#closeModal").addEventListener("click", () => document.querySelector("#modal").remove());
+    document.querySelector("#modal").addEventListener("scroll", (el) => el.preventDefault());
+    document.querySelector("#modal").addEventListener("mousewheel", (el) => el.preventDefault());
+    document.querySelector("#modal").addEventListener("touchmove", (el) => el.preventDefault());
     
     document.querySelector("#addPage").addEventListener("submit", (el) => {
       el.preventDefault();
