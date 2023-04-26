@@ -79,7 +79,7 @@ class Task {
           <button id="closeModal">X</button>
           <form id="editTask">
             <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
-            <select id="tags" name="tags" required>
+            <select id="tags" name="tags">
               <option value="Everyday" ${this.tag === "everyday" ? "selected" : ""}>Everyday</option>
               <option value="Leisure" ${this.tag === "leisure" ? "selected" : ""}>Leisure</option>
               <option value="Education" ${this.tag === "education" ? "selected" : ""}>Education</option>
@@ -205,8 +205,7 @@ class List {
           <button id="closeModal">X</button>
           <form id="addTask">
             <input type="text" name="title" placeholder="List Title" required pattern=".*\\S+.*"></input>
-            <select id="tags" name="tags" required>
-              <option value="" selected disabled hidden>Select a Tag</option>
+            <select id="tags" name="tags">
               <option value="Everyday">Everyday</option>
               <option value="Leisure">Leisure</option>
               <option value="Education">Education</option>
@@ -347,8 +346,8 @@ class Page {
 
 class Controller {
   constructor() {  
-    this.setDocHeight()  
-    this.pages = [];   
+    this.setDocHeight()     
+    this.pages = [];       
     document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
     this.renderComponent("body", '<button id="pagePlus"><img src="img/plus.svg" alt="add page"></button>');
     document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
@@ -404,7 +403,7 @@ class Controller {
         document.querySelector("#empty").remove();
       }
       this.setDocHeight()  
-      this.pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));    
+      this.pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));  
       this.renderComponent("main", this.pages[this.pages.length - 1].htmlFrag);    
       this.initComponent(this.pages[this.pages.length - 1]);
       this.initComponent(this.pages[this.pages.length - 1].lists[0]);
