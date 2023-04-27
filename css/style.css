@@ -2,124 +2,338 @@ p, li {
     font-family: 'Merriweather', serif;
 }
 
-h1, h2, h3, button {
+h1, h2, h3, button, input, select {
     font-family: 'Karla', sans-serif;
 }
 
 body {
-    font-size: 18px;
+    font-size: 17px;
     color: #222;
 
-    background-color: #fbfbfb;
+    background-color:#fbfbfb;
 }
 
 main {
     position: relative;
 
-    width: 33.333%;
+    width: 420px;
     min-height: 100%;
-    min-width: 420px;
 
-    padding: 100px 0;
-
-    margin: 0 auto;
-
-    background-color: #f9ea85;
+    padding: 40px 10px 50px 10px;
 
     box-shadow: 5px 0px 0px 0px rgba(0,0,0,0.15);
+
+    background-color: #f9ea85;
 }
 
-div[id^=page] {
-    margin-bottom: 20px;
-    padding: 15px;
+ul {
+    padding: 0;
+
+    list-style: none;
+}
+
+.stretch {
+    display: flex;   
+}
+
+#empty {
+    padding: 10px;
+
+    border-radius: 10px;
 
     background-color: #fff;
 }
 
-h1,h2, p, button {
-    margin-bottom: 10px;
+/* Modal Styling */
+#modal {
+    position: fixed;  
+    
+    width: 420px;
+    height: 100%;
+
+    margin-top: -40px;
+    margin-left: -10px;
+
+    padding: 40px 10px;
+    
+    z-index: 1;
+
+    background-color: #0fd8ba;
 }
 
-button, p  {
-    margin-top: -10px;
+#formContainer {
+    display: flex;
+    flex-direction: column;     
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    background-color: #fff;
 }
 
-button {
-    padding: 5px 10px;
+#formTitleContainer {
+    display: flex;
+    justify-content: center;
+}
 
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
+#leftPad {
+    width: 2em;
 
-    background-color: #19c0b8;
+    margin-right: auto;
 
+    visibility: hidden;
+}
+
+#formTitleContainer h1 {
+}
+
+#closeModal {
+    width: 2em;
+    height: 2em;
+
+    margin-left: auto;
+   
     border: none;
-    border-radius: 5px;
-}
+    border-radius: 25px;
 
-.delete {
-    margin-left: 10px;
-}
+    background-color: #f9ea85;
 
-ul {
-    padding-left: 15px;
-
-    list-style: none;
-}
-
-input[type=checkbox] {
-    margin-right: 10px;
-}
-
-div[id^=simpleList] .taskTitle {
-    text-decoration: line-through;
-} 
-
-img {
-    display: inline-block;
-
-    height: 18px;
+    font-weight: bold;
 
     cursor: pointer;
 }
 
-#test {
-    list-style: none;
-    width: 100%;
-    background-color: red;   
-}
-
-.stretch {
+#formContainer form {
     display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.stretch > img {
-    margin-left: auto;
-    align-self: center; 
-    cursor: pointer;  
+#formContainer input, select { 
+    height: 2.5em;
+
+    margin-top: 5px;
+
+    border: none;      
+    
+    font-weight: bold;
 }
 
-.stretch > .tag {
-    margin-left: 28px;
+#formContainer input[type=text], select {
+    width: 80%;
+
+    padding: 0 5px;
+
+    border-radius: 2px;
+
+    background-color: #eee;    
 }
 
-.options {
-    /* display: none; */
-    background-color: blue;
-    position: absolute;
-    right: 0px;
-    width: max-content;
-       
+#formContainer input[type=submit] {
+    display: flex;
+    align-items: center;
+
+    margin-top: 10px;
+    padding: 10px 20px;
+
+    border-radius: 5px;
+
+    background-color: #f9ea85;    
+    
+    font-size: 18px;
+    font-style: italic;
+
+    cursor: pointer;
 }
 
-.options > ul {
-    list-style: none;
+select {
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: menulist;
+    
     padding: 0;
 }
 
-@media only screen and (max-width: 450px) {
-    main {
+/* Page Styling */
+main > div[id^=page] {
+    margin-top: 30px;
+
+    padding: 10px;
+
+    border-radius: 10px;   
+
+    background-color: #fff;
+}
+
+main > div[id^=page]:first-child {
+    margin-top: 0;
+}
+
+.pageTitleCont {
+    display: flex;
+}
+
+.pageTitle {
+    display: block;
+    width: 90%; 
+    
+    white-space: nowrap;
+
+    overflow: hidden;
+    
+    text-overflow: ellipsis;    
+}
+
+.pageEllipsis {
+    height: 1em;
+
+    align-self: center;
+
+    margin-left: auto;
+
+    cursor: pointer;
+}
+
+.pageDate {
+    margin-top: -8px;
+
+    font-size: 19px;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.pageOptions {
+    position: absolute;
+    right: 28.5px; 
+
+    margin-top: 39px;
+    
+    padding: 5px 10px;
+
+    border-radius: 2px;
+
+    background-color: #eee; 
+}
+
+.pageOptions li {
+    cursor: pointer;
+}
+
+#pagePlus {
+    position: fixed;
+    bottom: 0;
+    
+    width: 2.5em;
+    height: 2.5em;
+
+    margin: 5px;
+    padding: 5px;
+    
+    border: none;
+    border-radius: 25px;
+
+    background-color: #0fd8ba;
+
+    cursor: pointer;
+}
+
+#pagePlus img {
+
+}
+
+/* List Styling */
+.listTitleCont {
+
+}
+
+.listPlus {
+    height: 1em;
+
+    align-self: center;
+
+    margin-left: auto;
+
+    cursor: pointer;
+}
+
+/* Task Styling */
+li[id^=task] {    
+}
+
+.taskEmpty {
+    padding-left: 5px;
+}
+
+.taskCheckbox {
+    margin: 0 5px;
+}
+
+.taskTitle {
+    display: block;
+    width: 90%; 
+    
+    white-space: nowrap;
+
+    overflow: hidden;
+    
+    text-overflow: ellipsis;
+}
+
+.taskTag {
+    margin: 2px 0 0 23px;
+    padding: 2px 10px;
+
+    border-radius: 15px;
+
+    background-color: #0fd8ba;
+
+    font-size: 12px;
+    font-weight: bold;  
+    font-family: 'Karla', sans-serif;
+
+    opacity: 70%;
+}
+
+.taskEllipsis {
+    height: 1em;
+
+    align-self: center;
+
+    margin-left: auto; 
+    cursor: pointer;
+}
+
+div[id^=simpleList] .taskTitle { 
+    opacity: 30%;
+}
+
+div[id^=simpleList] .taskTag {
+    display: none;
+}
+
+div[id^=simpleList] .taskEllipsis {
+    display: none;
+}
+
+.taskOptions {
+    position: absolute;
+    right: 28.5px; 
+
+    margin-top: 26.25px;
+    
+    padding: 5px 10px;
+
+    background-color: #eee;  
+}
+
+.taskOptions li {
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 420px) {
+    main, #modal {
         width: 100%;
-        min-width: 250px;
+        min-width: 350px;
     }
-  }
+}
