@@ -84,11 +84,11 @@ class Task {
           <form id="editTask">
             <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags">
-              <option value="Everyday" ${this.tag === "everyday" ? "selected" : ""}>Everyday</option>
-              <option value="Leisure" ${this.tag === "leisure" ? "selected" : ""}>Leisure</option>
-              <option value="Education" ${this.tag === "education" ? "selected" : ""}>Education</option>
-              <option value="Work" ${this.tag === "work" ? "selected" : ""}>Work</option>               
-              <option value="Shopping" ${this.tag === "shopping" ? "selected" : ""}>Shopping</option>
+              <option value="Everyday" ${this.tag === "Everyday" ? "selected" : ""}>Everyday</option>
+              <option value="Leisure" ${this.tag === "Leisure" ? "selected" : ""}>Leisure</option>
+              <option value="Education" ${this.tag === "Education" ? "selected" : ""}>Education</option>
+              <option value="Work" ${this.tag === "Work" ? "selected" : ""}>Work</option>               
+              <option value="Shopping" ${this.tag === "Shopping" ? "selected" : ""}>Shopping</option>
             </select>
             <input type="submit" value="Edit Task">
           </form>
@@ -135,14 +135,18 @@ class Task {
         this.list.tasks.forEach(task => task.elements.find(element => element.name === "eltaskCheckbox").el.checked = true);     
       }
            
-      document.querySelector("#modal").remove();      
-    });   
-    
-    // Local Storage Stuff   
-    localStorage.setItem("local", JSON.stringify(toLocal()));
-    local = JSON.parse(localStorage.getItem("local"));
-    console.log("IN LOCAL STORAGE");     
-    console.log(local);
+      document.querySelector("#modal").remove(); 
+      
+      // Local Storage Stuff   
+      localStorage.setItem("local", JSON.stringify(toLocal()));
+      local = JSON.parse(localStorage.getItem("local"));
+      console.log("IN LOCAL STORAGE");     
+      console.log(local);
+
+      if(pages.length === 0) {
+        localStorage.clear();
+      }
+    });     
   }
 
   deleteTask() {
@@ -164,6 +168,10 @@ class Task {
     local = JSON.parse(localStorage.getItem("local"));
     console.log("IN LOCAL STORAGE");     
     console.log(local);
+
+    if(pages.length === 0) {
+      localStorage.clear();
+    }
   }
 
   moveTask(addFunctionality) {    
@@ -192,6 +200,10 @@ class Task {
     local = JSON.parse(localStorage.getItem("local"));
     console.log("IN LOCAL STORAGE");     
     console.log(local);
+
+    if(pages.length === 0) {
+      localStorage.clear();
+    }
   }
 }
 
@@ -233,7 +245,7 @@ class List {
             <button id="closeModal">X</button>
           </div>
           <form id="addTask">
-            <input type="text" name="title" placeholder="List Title" required pattern=".*\\S+.*"></input>
+            <input type="text" name="title" placeholder="Task Title" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags">
               <option value="Everyday">Everyday</option>
               <option value="Leisure">Leisure</option>
@@ -270,10 +282,14 @@ class List {
         document.querySelector("#modal").remove();
         
         // Local Storage Stuff   
-      localStorage.setItem("local", JSON.stringify(toLocal()));
-      local = JSON.parse(localStorage.getItem("local"));
-      console.log("IN LOCAL STORAGE");     
-      console.log(local);
+        localStorage.setItem("local", JSON.stringify(toLocal()));
+        local = JSON.parse(localStorage.getItem("local"));
+        console.log("IN LOCAL STORAGE");     
+        console.log(local);
+
+        if(pages.length === 0) {
+          localStorage.clear();
+        }
       });     
     } else {
       controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
@@ -374,14 +390,18 @@ class Page {
         document.querySelector(".pageOptions").remove();
       }
       document.querySelector(`#${this.id} .pageTitle`).innerHTML = this.title;      
-      document.querySelector("#modal").remove();      
-    });  
-    
-    // Local Storage Stuff   
-    localStorage.setItem("local", JSON.stringify(toLocal()));
-    local = JSON.parse(localStorage.getItem("local"));
-    console.log("IN LOCAL STORAGE");     
-    console.log(local);
+      document.querySelector("#modal").remove(); 
+      
+      // Local Storage Stuff   
+      localStorage.setItem("local", JSON.stringify(toLocal()));
+      local = JSON.parse(localStorage.getItem("local"));
+      console.log("IN LOCAL STORAGE");     
+      console.log(local);
+
+      if(pages.length === 0) {
+        localStorage.clear();
+      }
+    });     
   }
 
   deletePage() {
@@ -397,6 +417,10 @@ class Page {
     local = JSON.parse(localStorage.getItem("local"));
     console.log("IN LOCAL STORAGE");     
     console.log(local);
+
+    if(pages.length === 0) {
+      localStorage.clear();
+    }
   }
 }
 
@@ -475,6 +499,10 @@ class Controller {
       local = JSON.parse(localStorage.getItem("local"));
       console.log("IN LOCAL STORAGE");     
       console.log(local);
+
+      if(pages.length === 0) {
+        localStorage.clear();
+      }
     });    
   }  
 
@@ -553,6 +581,5 @@ let toLocal = () => {
     })
     local.push(tmp);
   })); 
-
   return local;
 } 
