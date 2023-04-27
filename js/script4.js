@@ -3,32 +3,6 @@ let pageIdCounter = 0;
 let listIdCounters = [0, 0];
 let taskIdCounter = 0;
 
-class Test {
-  constructor(id, title, controller) {
-    this.idFlag = "page";
-    this.id = `${this.idFlag}${id}`;
-    this.title = title;
-    this.controller = controller;
-    this.date = new Date();  
-    //this.lists = [new List(listIdCounters[0]++, "To Do List", "complexList", this)];  
-    // this.lists = [new List(listIdCounters[0]++, "To Do List", "complexList", this),
-    //               new List(listIdCounters[1]++, "Completed List", "simpleList", this)];    
-    // this.optionsDisplayed = false;
-    // this.htmlFrag = `
-    // <div id="${this.id}"> 
-    //   <div class="pageTitleCont">             
-    //     <h1 class="pageTitle" title="${this.title}">${this.title}</h1> 
-    //     <img class="pageEllipsis" src="img/ellipsis.svg" alt="task options">
-    //   </div>
-    //   <h2 class="pageDate">${String(this.date.getDate()).padStart(2, "0")}/${String(this.date.getMonth() + 1).padStart(2, "0")}/${this.date.getFullYear()}</h2>       
-    //   <p class="pageUncompComp">${this.lists[0].tasks.length} incomplete, ${this.lists[1].tasks.length} complete</p>    
-    //   ${this.lists.map(item => `${item.htmlFrag}`).join("")}
-    // </div>
-    // `;  
-    //this.elements = [new Element("elListEllipsis", `#${this.id} .pageEllipsis`, "click", this.displayOptions.bind(this))];
-  } 
-}
-
 class Element {
   constructor(name, selector, event = null, callBack = null, el = null) {
     this.name = name;
@@ -162,7 +136,13 @@ class Task {
       }
            
       document.querySelector("#modal").remove();      
-    });     
+    });   
+    
+    // Local Storage Stuff   
+    localStorage.setItem("local", JSON.stringify(toLocal()));
+    local = JSON.parse(localStorage.getItem("local"));
+    console.log("IN LOCAL STORAGE");     
+    console.log(local);
   }
 
   deleteTask() {
@@ -178,6 +158,12 @@ class Task {
 
     document.querySelector(`#${pages.find(page => page.id === this.list.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                             `<p class="pageUncompComp">${this.list.page.lists[0].tasks.length} incomplete, ${this.list.page.lists[1].tasks.length} complete</p>`);    
+  
+    // Local Storage Stuff   
+    localStorage.setItem("local", JSON.stringify(toLocal()));
+    local = JSON.parse(localStorage.getItem("local"));
+    console.log("IN LOCAL STORAGE");     
+    console.log(local);
   }
 
   moveTask(addFunctionality) {    
@@ -200,6 +186,12 @@ class Task {
     else if(this.list.idFlag === "simpleList") {
       this.elements.find(element => element.name === "eltaskCheckbox").el.checked = true;      
     }
+
+    // Local Storage Stuff   
+    localStorage.setItem("local", JSON.stringify(toLocal()));
+    local = JSON.parse(localStorage.getItem("local"));
+    console.log("IN LOCAL STORAGE");     
+    console.log(local);
   }
 }
 
@@ -275,7 +267,13 @@ class List {
         document.querySelector(`#${pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                                `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
 
-        document.querySelector("#modal").remove();        
+        document.querySelector("#modal").remove();
+        
+        // Local Storage Stuff   
+      localStorage.setItem("local", JSON.stringify(toLocal()));
+      local = JSON.parse(localStorage.getItem("local"));
+      console.log("IN LOCAL STORAGE");     
+      console.log(local);
       });     
     } else {
       controller.renderComponent(`#${this.id} ul`, this.tasks[this.tasks.length - 1].htmlFrag);  
@@ -285,7 +283,7 @@ class List {
 
       document.querySelector(`#${pages.find(page => page.id === this.page.id).id} .pageDate`).insertAdjacentHTML("afterend",
                             `<p class="pageUncompComp">${this.page.lists[0].tasks.length} incomplete, ${this.page.lists[1].tasks.length} complete</p>`);
-    }     
+    }    
   }  
 }
 
@@ -377,7 +375,13 @@ class Page {
       }
       document.querySelector(`#${this.id} .pageTitle`).innerHTML = this.title;      
       document.querySelector("#modal").remove();      
-    });     
+    });  
+    
+    // Local Storage Stuff   
+    localStorage.setItem("local", JSON.stringify(toLocal()));
+    local = JSON.parse(localStorage.getItem("local"));
+    console.log("IN LOCAL STORAGE");     
+    console.log(local);
   }
 
   deletePage() {
@@ -387,6 +391,12 @@ class Page {
     if(pages.length === 0) {  
       document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
     }
+
+    // Local Storage Stuff   
+    localStorage.setItem("local", JSON.stringify(toLocal()));
+    local = JSON.parse(localStorage.getItem("local"));
+    console.log("IN LOCAL STORAGE");     
+    console.log(local);
   }
 }
 
@@ -454,18 +464,17 @@ class Controller {
         document.querySelector("#empty").remove();
       }
       this.setDocHeight()  
-      pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));       
-      
-      // Local Storage Stuff   
-      window.localStorage.setItem("local", JSON.stringify(toLocal()));
-      local = JSON.parse(window.localStorage.getItem("local"));
-      console.log(local);     
-
-      this.renderComponent("main", pages[pages.length - 1].htmlFrag);    
+      pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));    this.renderComponent("main", pages[pages.length - 1].htmlFrag);    
       this.initComponent(pages[pages.length - 1]);
       this.initComponent(pages[pages.length - 1].lists[0]);
       document.querySelector("#modal").remove();
       document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    
+      // Local Storage Stuff   
+      localStorage.setItem("local", JSON.stringify(toLocal()));
+      local = JSON.parse(localStorage.getItem("local"));
+      console.log("IN LOCAL STORAGE");     
+      console.log(local);
     });    
   }  
 
@@ -477,29 +486,51 @@ class Controller {
 
 let controller = new Controller();
 let pages = [];
-let local = JSON.parse(window.localStorage.getItem("local"));
+let local;
 
-if(window.localStorage.getItem("local")) {
+if(localStorage.getItem("local")) {
   console.log("STORAGE"); 
+  console.log("======="); 
+  console.log("IN LOCAL STORAGE - on refresh");
+  let tmp = localStorage.getItem("local")
+  local = JSON.parse(tmp);
+  console.log(local);  
 
-  (local.forEach(page => {      
-    console.log("from page"); 
-    console.log(page.id + " " + page.title);
+  (local.forEach((page, i) => {  
 
-    page.lists.forEach(list => { 
-      console.log("from list");      
+    pages.push(new Page(pageIdCounter++, page.title, controller)); 
 
-      list.tasks.forEach(task => {
-        console.log("from task"); 
+    controller.renderComponent("main", pages[i].htmlFrag);    
+    controller.initComponent(pages[i]);
+    controller.initComponent(pages[i].lists[0]);
 
-      })      
-    })
-  })); 
+    page.lists.forEach((list, j) => { 
 
-  // pages.push(new Page(pageIdCounter++, "FROM STORAGE", controller));
-  // controller.renderComponent("main", pages[pages.length - 1].htmlFrag);    
-  // controller.initComponent(pages[pages.length - 1]);
-  // controller.initComponent(pages[pages.length - 1].lists[0]);
+      list.tasks.forEach((task, k) => { 
+        if (document.querySelector(`#${pages[i].lists[j].id} .taskEmpty`)) {
+          document.querySelector(`#${pages[i].lists[j].id} .taskEmpty`).remove();
+        }
+
+        pages[i].lists[j].tasks.push(new Task(task.id, task.title, task.tag, pages[i].lists[j]));
+
+        controller.renderComponent(`#${pages[i].lists[j].id} ul`, pages[i].lists[j].tasks[pages[i].lists[j].tasks.length - 1].htmlFrag);  
+        controller.initComponent(pages[i].lists[j].tasks[pages[i].lists[j].tasks.length - 1]); 
+
+        document.querySelector(`#${pages[i].id} .pageUncompComp`).remove();
+
+        document.querySelector(`#${pages[i].id} .pageDate`).insertAdjacentHTML("afterend",
+                               `<p class="pageUncompComp">${pages[i].lists[0].tasks.length} incomplete, ${pages[i].lists[1].tasks.length} complete</p>`);
+        
+        if(list.idFlag === "complexList") {
+          pages[i].lists[j].tasks[k].elements.find(element => element.name === "eltaskCheckbox").el.checked = false;    
+        }
+        else if(list.idFlag === "simpleList") {
+          pages[i].lists[j].tasks[k].elements.find(element => element.name === "eltaskCheckbox").el.checked = true;     
+        }
+      })  
+    })     
+  }));   
+
 } else {
   console.log("NEW"); 
 
@@ -511,20 +542,13 @@ let toLocal = () => {
 
   (pages.forEach(page => {  
     let tmp;
-    console.log("from page");
     tmp = {id: page.id, title: page.title, lists: []};    
 
-    page.lists.forEach(list => { 
-      console.log("from list");
+    page.lists.forEach((list, i)=> { 
       tmp.lists.push({id: list.id, title: list.title, idFlag: list.idFlag, tasks: []})
 
-      list.tasks.forEach(task => {
-        console.log("from task");
-        if(task.list.idFlag === "complexList") {
-          tmp.lists[0].tasks.push({id: task.id, title: task.title, tag: task.tag});
-        } else {
-          tmp.lists[1].tasks.push({id: task.id, title: task.title, tag: task.tag});
-        }        
+      list.tasks.forEach(task => {        
+          tmp.lists[i].tasks.push({id: task.id, title: task.title, tag: task.tag});            
       })      
     })
     local.push(tmp);
