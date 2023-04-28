@@ -11,16 +11,19 @@ body {
     color: #222;
 
     background-color:#fbfbfb;
+
+    overflow-x: hidden
 }
 
 main {
     position: relative;
 
-    width: 420px;
+    max-width: 420px;
+
     min-height: 100%;
 
     margin: 0 auto;
-    padding: 40px 10px 50px 10px;
+    padding: 40px 10px 47.4px 10px;
 
     box-shadow: 5px 0px 0px 0px rgba(0,0,0,0.15);
 
@@ -38,6 +41,8 @@ ul {
 }
 
 #empty {
+    min-width: 100%;
+
     padding: 10px;
 
     border-radius: 10px;
@@ -167,7 +172,7 @@ main > div[id^=page] {
     background-color: #fff;
 }
 
-main > div[id^=page]:first-child {
+main > div[id^=page]:first-of-type {
     margin-top: 0;
 }
 
@@ -227,10 +232,9 @@ main > div[id^=page]:first-child {
     
     width: 2.5em;
     height: 2.5em;
-
-    margin: 5px;
-    padding: 5px;
     
+    margin-bottom: 2.5px;
+        
     border: none;
     border-radius: 25px;
 
@@ -336,5 +340,17 @@ div[id^=simpleList] .taskEllipsis {
     main, #modal {
         width: 100%;
         min-width: 350px;
+        
+        box-shadow: none;
+    }
+
+    #empty {
+        width: 100%;
+        min-width: 330px;
+    }
+
+    main > div[id^=page] {
+        width: 100%;
+        min-width: 330px;
     }
 }

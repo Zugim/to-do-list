@@ -3,6 +3,11 @@ let pageIdCounter = 0;
 let listIdCounters = [0, 0];
 let taskIdCounter = 0;
 
+let mainLeftPadding = parseFloat(window.getComputedStyle(document.querySelector("main"), null).getPropertyValue('padding-left'));
+let mainRightPadding = parseFloat(window.getComputedStyle(document.querySelector("main"), null).getPropertyValue('padding-right'));
+let addPageButtonWidth;
+let addPageButtonOffset;
+
 class Element {
   constructor(name, selector, event = null, callBack = null, el = null) {
     this.name = name;
@@ -407,7 +412,9 @@ class Page {
   deletePage() {
     document.querySelector(`#${this.id}`).remove();    
     pages = pages.filter(page => page.id !== this.id);
-    document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+    
+    document.querySelector("#pagePlus").style.marginLeft = `${document.querySelector("main").clientWidth - addPageButtonOffset}px`;
+    
     if(pages.length === 0) {  
       document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
     }
@@ -426,21 +433,26 @@ class Page {
 
 class Controller {
   constructor() {  
-    this.setDocHeight()       
-    this.renderComponent("body", '<button id="pagePlus"><img src="img/plus.svg" alt="add page"></button>');
+    //this.setDocHeight()  
+
+    this.renderComponent("main", '<button id="pagePlus"><img src="img/plus.svg" alt="add page"></button>');
     document.querySelector("#pagePlus").addEventListener("click", this.addPage.bind(this));
-    document.querySelector("#pagePlus").style.right += `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+
+    addPageButtonWidth = document.querySelector("#pagePlus").clientWidth;
+    addPageButtonOffset = (mainLeftPadding + mainRightPadding + addPageButtonWidth) - 7.5;    
+    document.querySelector("#pagePlus").style.marginLeft += `${document.querySelector("main").clientWidth - addPageButtonOffset}px`;
+    
     window.addEventListener("resize", () => {
-      this.setDocHeight()       
-      document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+      document.querySelector("#pagePlus").style.marginLeft = `${document.querySelector("main").clientWidth - addPageButtonOffset}px`;
+    });
+    window.addEventListener("scroll", () => {
+      document.querySelector("#pagePlus").style.marginLeft = `${document.querySelector("main").clientWidth - addPageButtonOffset}px`;
     });
     window.addEventListener("touchmove", () => {
-      this.setDocHeight()       
-      document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+      document.querySelector("#pagePlus").style.marginLeft = `${document.querySelector("main").clientWidth - addPageButtonOffset}px`;
     });
     window.addEventListener("touch", () => {
-      this.setDocHeight()       
-      document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+      document.querySelector("#pagePlus").style.marginLeft = `${document.querySelector("main").clientWidth - addPageButtonOffset}px`;
     });
   }
 
@@ -487,12 +499,13 @@ class Controller {
       if(document.querySelector("#empty")) {
         document.querySelector("#empty").remove();
       }
-      this.setDocHeight()  
+
       pages.push(new Page(pageIdCounter++, document.querySelector("#addPage").elements["title"].value, this));    this.renderComponent("main", pages[pages.length - 1].htmlFrag);    
       this.initComponent(pages[pages.length - 1]);
       this.initComponent(pages[pages.length - 1].lists[0]);
       document.querySelector("#modal").remove();
-      document.querySelector("#pagePlus").style.right = `${document.querySelector("body").scrollWidth - document.querySelector("main").offsetWidth}px`;
+
+      document.querySelector("#pagePlus").style.marginLeft = `${document.querySelector("main").clientWidth - addPageButtonOffset}px`;
     
       // Local Storage Stuff   
       localStorage.setItem("local", JSON.stringify(toLocal()));
@@ -506,10 +519,10 @@ class Controller {
     });    
   }  
 
-  setDocHeight() {
-    document.querySelector("html").style.height = `${window.innerHeight}px`;
-    document.querySelector("body").style.height = `${window.innerHeight}px`;
-  }
+  // setDocHeight() {
+  //   document.querySelector("html").style.height = `${window.innerHeight}px`;
+  //   document.querySelector("body").style.height = `${window.innerHeight}px`;
+  // }
 }
 
 let controller = new Controller();
