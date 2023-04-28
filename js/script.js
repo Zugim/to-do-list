@@ -30,7 +30,7 @@ class Task {
     <li id="${this.id}">
       <div class="taskContainerTop stretch">
         <input class="taskCheckbox" type="checkbox" name="complete"/>
-        <span class="taskTitle">${this.title}</span>
+        <span class="taskTitle" title="${this.title}">${this.title}</span>
         <img class="taskEllipsis" src="img/ellipsis.svg" alt="task options">
       </div>      
       <div class="taskContainerBottom stretch">
