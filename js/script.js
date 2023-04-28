@@ -89,7 +89,7 @@ class Task {
           <form id="editTask">
             <input type="text" name="title" value="${this.title}" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags">
-              <option value="Everyday" ${this.tag === "Everyday" ? "selected" : ""}>Everyday</option>
+              <option value="General" ${this.tag === "General" ? "selected" : ""}>General</option>
               <option value="Leisure" ${this.tag === "Leisure" ? "selected" : ""}>Leisure</option>
               <option value="Education" ${this.tag === "Education" ? "selected" : ""}>Education</option>
               <option value="Work" ${this.tag === "Work" ? "selected" : ""}>Work</option>               
@@ -145,9 +145,7 @@ class Task {
       // Local Storage Stuff   
       localStorage.setItem("local", JSON.stringify(toLocal()));
       local = JSON.parse(localStorage.getItem("local"));
-      console.log("IN LOCAL STORAGE");     
-      console.log(local);
-
+      
       if(pages.length === 0) {
         localStorage.clear();
       }
@@ -171,9 +169,7 @@ class Task {
     // Local Storage Stuff   
     localStorage.setItem("local", JSON.stringify(toLocal()));
     local = JSON.parse(localStorage.getItem("local"));
-    console.log("IN LOCAL STORAGE");     
-    console.log(local);
-
+    
     if(pages.length === 0) {
       localStorage.clear();
     }
@@ -203,9 +199,7 @@ class Task {
     // Local Storage Stuff   
     localStorage.setItem("local", JSON.stringify(toLocal()));
     local = JSON.parse(localStorage.getItem("local"));
-    console.log("IN LOCAL STORAGE");     
-    console.log(local);
-
+   
     if(pages.length === 0) {
       localStorage.clear();
     }
@@ -252,7 +246,7 @@ class List {
           <form id="addTask">
             <input type="text" name="title" placeholder="Task Title" required pattern=".*\\S+.*"></input>
             <select id="tags" name="tags">
-              <option value="Everyday">Everyday</option>
+              <option value="General">General</option>
               <option value="Leisure">Leisure</option>
               <option value="Education">Education</option>
               <option value="Work">Work</option>               
@@ -289,9 +283,7 @@ class List {
         // Local Storage Stuff   
         localStorage.setItem("local", JSON.stringify(toLocal()));
         local = JSON.parse(localStorage.getItem("local"));
-        console.log("IN LOCAL STORAGE");     
-        console.log(local);
-
+       
         if(pages.length === 0) {
           localStorage.clear();
         }
@@ -400,9 +392,7 @@ class Page {
       // Local Storage Stuff   
       localStorage.setItem("local", JSON.stringify(toLocal()));
       local = JSON.parse(localStorage.getItem("local"));
-      console.log("IN LOCAL STORAGE");     
-      console.log(local);
-
+     
       if(pages.length === 0) {
         localStorage.clear();
       }
@@ -422,9 +412,7 @@ class Page {
     // Local Storage Stuff   
     localStorage.setItem("local", JSON.stringify(toLocal()));
     local = JSON.parse(localStorage.getItem("local"));
-    console.log("IN LOCAL STORAGE");     
-    console.log(local);
-
+    
     if(pages.length === 0) {
       localStorage.clear();
     }
@@ -510,9 +498,7 @@ class Controller {
       // Local Storage Stuff   
       localStorage.setItem("local", JSON.stringify(toLocal()));
       local = JSON.parse(localStorage.getItem("local"));
-      console.log("IN LOCAL STORAGE");     
-      console.log(local);
-
+      
       if(pages.length === 0) {
         localStorage.clear();
       }
@@ -529,13 +515,9 @@ let controller = new Controller();
 let pages = [];
 let local;
 
-if(localStorage.getItem("local")) {
-  console.log("STORAGE"); 
-  console.log("======="); 
-  console.log("IN LOCAL STORAGE - on refresh");
+if(localStorage.getItem("local")) {  
   let tmp = localStorage.getItem("local")
   local = JSON.parse(tmp);
-  console.log(local);  
 
   (local.forEach((page, i) => {  
 
@@ -573,8 +555,6 @@ if(localStorage.getItem("local")) {
   }));   
 
 } else {
-  console.log("NEW"); 
-
   document.querySelector("main").insertAdjacentHTML("beforeend", `<h2 id="empty">You don't have any lists yet. Click the plus in the bottom right corner to get started. 👍</h2>`);
 }
 

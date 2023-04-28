@@ -263,8 +263,14 @@ main > div[id^=page]:first-of-type {
 }
 
 /* Task Styling */
-li[id^=task] {    
+li[id^=task] {  
+    padding-bottom: 5px;  
 }
+
+li[id^=task]:last-of-type {  
+    padding-bottom: 0;  
+}
+
 
 .taskEmpty {
     padding-left: 5px;
