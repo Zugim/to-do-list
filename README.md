@@ -1,1 +1,1 @@
-# To do list created to practice vanilla JavaScript
+# To do list project to practice vanilla JavaScript
